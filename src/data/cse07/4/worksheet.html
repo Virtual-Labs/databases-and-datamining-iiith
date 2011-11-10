@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<!--<head></head>-->
+<h1 id="main-title">
+SQL-1
+</h1>
+</head>
+<div id="introduction">
+	<h2>Introduction </h2>
+	 <p>
+	 	SQL, referred to as Structured Query Language, is a database computer language designed for managing data in relational database management systems (RDBMS). Its scope includes efficient data insert, query, update and delete, schema creation and modification, and data access control. In this chapter, we discuss basic SQL operations like creating a table, deleting a table, changing the schema of the table, primary key and foreign key constraints on a table and creating indexes on tables.
+	</p>
+	<br>
+ </div>
+
+<div id="Procedure">
+	<h2>Procedure</h2> 
+	<p>
+In this section, we describe the methods we follow to create a table, delete a table and methods to create indexes, and primary keys for a table. Detailed examples on the usage of these commands is given in the simulation section below.
+
+<ol>
+<li>Creating a table is made using the "create <tablename>" command</li>
+<li>Deleting a table can be done using the "drop <tablename>" command.</li>
+<li>Modifying a row from a table can be done using the "alter <tablename> set " command.</li>
+<li>In SQL, there is a notion of a primary key which is unique for a given table. The primary key for a table can be set by declaring the attribute as a PRIMARY KEY while creating the table. Examples of usage of the primary key are given below. </li>
+<li> We can create indexes to particular tables to allow a faster access of the table. An index on a table is created using the "create index <indexname>" command </li>
+</ol>
+
+<p class="intro">The CREATE INDEX statement is used to create indexes in tables.</p>
+<p class="intro">Indexes allow the database application to find data fast; without reading the whole table.</p>
+<hr />
+
+<h2>Indexes</h2>
+<p>An index can be created in a table to find data more quickly and efficiently.</p>
+<p>The users cannot see the indexes, they are just used to speed up searches/queries.</p>
+<p><b>Note:</b> Updating a table with indexes takes more time than updating a table without (because the indexes also need an update).
+So you should only create indexes on columns (and tables) that will be frequently searched against.</p>
+
+<h3>SQL CREATE INDEX Syntax</h3>
+<p>Creates an index on a table. Duplicate values are allowed:</p>
+<table class="code notranslate" cellspacing="0" cellpadding="0" border="0" width="100%">
+<tr><td>CREATE INDEX index_name<br />
+ON table_name (column_name)</td></tr></table>
+
+<h3>SQL CREATE UNIQUE INDEX Syntax</h3>
+<p>Creates a unique index on a table. Duplicate values are not allowed:</p>
+<table class="code notranslate" cellspacing="0" cellpadding="0" border="0" width="100%">
+<tr><td>CREATE UNIQUE INDEX index_name<br />
+
+ON table_name (column_name)</td></tr></table>
+
+<hr />
+
+<p>The PRIMARY KEY constraint uniquely identifies each record in a database table.</p>
+<p>Primary keys must contain unique values.</p>
+<p>A primary key column cannot contain NULL values.</p>
+<p>Each table should have a primary key, and each table can have only ONE primary key.</p>
+<hr />
+
+</p>
+</div>
+
+<div id="simulation">
+	<h2>Simulation/Experiments</h2> 
+	<p>
+	    Lets create a database for a university. A university typically has many students, each student has a set of courses, courses are taught by some professors, etc. We show how we can do that using SQL. SQL mainly stores data in the form of tables. A database of a university consists of tables, for each object, a table for students, a table for courses, a table for professors, etc.
+
+{{{id=8|
+#auto
+
+import sqlite3
+conn = sqlite3.connect('university')
+curs = conn.cursor()
+def sql(c): curs.execute(c)
+///
+}}}
+
+</p>
+	<h3> Creating Tables </h3>
+	<p>
+We can create a table using the following syntax. "CREATE TABLE table_name (attribute1 type, attribute2 type, ...)". table_name is the name of the table, attribute1,.. indicates the attributes the table contains and type.. indicates type of each attribute. In the example below, we created a table for students, which contains his roll number of type 'integer', name as a 'string' of length 30, and his date of birth which is of type 'date'. Here every student must have a roll number. This is specified by the keyword "NOT NULL". If the table is already present, the command 'CREATE TABLE' gives an error.
+
+{{{id=24|
+sql('CREATE TABLE Students(RollNo integer NOT NULL,Name char(30), BDay date)')
+///
+}}}
+
+{{{id=29|
+sql('CREATE TABLE Students(RollNo integer NOT NULL,Name char(30), BDay date)')
+///
+}}}
+
+</p>
+
+<hr />
+<h3> Deleting tables </h3>
+
+<p>
+For removing a table, we use the command DROP TABLE. The syntax for DROP is "DROP TABLE table_name". The following example creates a sample table "temp" and removes it.
+
+{{{id=20|
+sql('CREATE TABLE temp(attr1 integer, attr2 char(20))')
+sql('DROP TABLE temp')
+///
+}}}
+
+</p>
+
+<hr />
+
+
+<h3> Modifying tables </h3>
+	<p>
+
+Lets now look at how we can modify/alter tables. Consider the scenario where you already created a table say "students" and you forgot to add a column, say "year". For changing tables once they are already created, we use the sql command "ALTER TABLE". The syntax of alter is as follows: "ALTER TABLE table_name ADD COLUMN attribute type". Given below is an example of ALTER TABLE, where we add the column the year in which the student is currently in.
+
+{{{id=11|
+sql('ALTER TABLE Students ADD COLUMN year integer')
+///
+}}}
+
+{{{id=28|
+sql('ALTER TABLE Students ADD COLUMN year integer')
+///
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "_sage_input_7.py", line 10, in <module>
+    exec compile(u'open("___code___.py","w").write("# -*- coding: utf-8 -*-\\n" + _support_.preparse_worksheet_cell(base64.b64decode("c3FsKCdBTFRFUiBUQUJMRSBTdHVkZW50cyBBREQgQ09MVU1OIHllYXIgaW50ZWdlcicp"),globals())+"\\n"); execfile(os.path.abspath("___code___.py"))' + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmp_Yes4F/___code___.py", line 2, in <module>
+    exec compile(u"sql('ALTER TABLE Students ADD COLUMN year integer')" + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmp7_ZuXm/___code___.py", line 5, in sql
+    def sql(c): curs.execute(c)
+sqlite3.OperationalError: no such table: Students
+}}}
+
+</p>
+
+<hr />
+	<h3> Indexes </h3>
+	<p>
+	An index can be created in a table to find data more quickly and efficiently.
+
+The users cannot see the indexes, they are just used to speed up searches/queries.
+
+Updating a table with indexes takes more time than updating a table without (because the indexes also need an update). So you should only create indexes on columns (and tables) that will be frequently searched against.
+
+To create an index on a table, we use the CREATE INDEX command. The syntax of this command is: "CREATE INDEX index_name ON table_name (column_name)". 
+In the example below, we created an index on the table students on the column rollno.
+
+{{{id=12|
+sql('CREATE INDEX newindex ON Students(rollno)')
+///
+}}}
+
+</p>
+
+<hr />
+<h3> SQL PRIMARY KEY Constraint </h3>
+
+<p>
+The PRIMARY KEY constraint uniquely identifies each record in a database table. Primary keys must contain unique values. A primary key column cannot contain NULL values. Each table should have a primary key, and each table can have only ONE primary key.
+</p>
+<p>
+In MySQL, a particular attribute can be declared as primary key by using the keyword "PRIMARY KEY (attribute name)", while creating the table. The below example shows a table "Professors" being created with the value of Professor id(P_Id) as primary key.
+
+{{{id=14|
+sql('''CREATE TABLE Professors
+(P_Id int NOT NULL,
+Name varchar(255) NOT NULL,
+Address varchar(255),
+PRIMARY KEY (P_Id))''')
+///
+}}}
+
+</p>
+<hr />
+
+<h3>SQL FOREIGN KEY Constraint</h3>
+
+<p>A FOREIGN KEY in one table points to a PRIMARY KEY in another table. Let's illustrate the foreign key with an example. Look at the following two tables:</p>
+
+<p>The &quot;Professor&quot; table:</p>
+<table class="reference" cellspacing="0" cellpadding="0" border="1">
+
+  <tr>
+    <th width="15%" align="left">P_Id</th>
+    <th width="20%" align="left">Last Name</th>
+    <th width="15%" align="left">Ph no.</th>
+
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>John</td>
+    <td>9989833</td>
+
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Stevenson</td>
+    <td>3944344</td>
+
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Pettersen</td>
+    <td>5654343</td>
+
+  </tr>
+</table>
+<p>The &quot;Courses&quot; table:</p>
+<table class="reference" cellspacing="0" cellpadding="0" border="1">
+  <tr>
+    <th width="15%" align="left">Course_Id</th>
+    <th width="20%" align="left">Course Name</th>
+
+    <th width="15%" align="left">P_Id</th>
+  </tr>
+  <tr>
+    <td>3341</td>
+    <td>Databases</td>
+    <td>3</td>
+  </tr>
+
+  <tr>
+    <td>2752</td>
+    <td>C Programming</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>6543</td>
+
+    <td>Compilers</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>4700</td>
+    <td>Data Structures</td>
+    <td>1</td>
+
+  </tr>
+  </table>
+<p>Note that the &quot;P_Id&quot; column in the &quot;Courses&quot; table points to the &quot;P_Id&quot; column in the &quot;Professors&quot; table. The &quot;P_Id&quot; column in the &quot;Professors&quot; table is the PRIMARY KEY in the &quot;Professors&quot; table.
+The &quot;P_Id&quot; column in the &quot;Courses&quot; table is a FOREIGN KEY in the &quot;Courses&quot; table.</p>
+
+<p>The FOREIGN KEY constraint is used to prevent actions that would destroy links between tables.
+The FOREIGN KEY constraint also prevents that invalid data form being inserted into the foreign key column,
+because it has to be one of the values contained in the table it points to. The following SQL creates a FOREIGN KEY on the &quot;P_Id&quot; column when the &quot;Courses&quot; table is created:</p>
+
+{{{id=16|
+sql('''CREATE TABLE Courses
+(Course_Id int NOT NULL,
+CourseName int NOT NULL,
+P_Id int,
+PRIMARY KEY (Course_Id),
+FOREIGN KEY (P_Id) REFERENCES Professor(P_Id))''')
+///
+}}}
+
+{{{id=25|
+
+///
+}}}
+
+<div id="quiz">
+	<h2> Quiz </h2>
+	 <p> Consider the following database of a university.  
+<table class="Student" cellspacing="0" cellpadding="0" border="1">
+  <tr>
+    <th width="15%" align="left">Name</th>
+    <th width="20%" align="left">Student Number</th>
+    <th width="20%" align="left">Class</th>
+    <th width="20%" align="left">Major</th>
+  </tr>
+  <tr>
+    <td>Uday</td>
+    <td>17</td>
+    <td>1</td>
+    <td>cs</td>
+  </tr>
+
+<tr>
+    <td>Nitin</td>
+    <td>8</td>
+    <td>2</td>
+    <td>cs</td>
+  </tr>
+  </table>
+
+<br>
+
+<table class="Courses" cellspacing="0" cellpadding="0" border="1">
+  <tr>
+    <th width="15%" align="left">Course Name</th>
+    <th width="20%" align="left">Course Number</th>
+    <th width="20%" align="left">Hours</th>
+    <th width="20%" align="left">Department</th>
+  </tr>
+  <tr>
+    <td>Intro to Computer Science</td>
+    <td> CS1310</td>
+    <td>4</td>
+    <td>cs</td>
+  </tr>
+
+<tr>
+    <td>Data Structures</td>
+    <td>CS3320</td>
+    <td>4</td>
+    <td>cs</td>
+  </tr>
+
+<tr>
+    <td>Discrete Maths</td>
+    <td>MATH2410</td>
+    <td>3</td>
+    <td>MATH</td>
+  </tr>
+
+<tr>
+    <td>Database</td>
+    <td>CS3380</td>
+    <td>3</td>
+    <td>cs</td>
+  </tr>
+  </table>
+<br> 
+<table class="Section" cellspacing="0" cellpadding="0" border="1">
+  <tr>
+    <th width="15%" align="left">Section Identifier</th>
+    <th width="20%" align="left">Course Number</th>
+    <th width="20%" align="left">Semester</th>
+    <th width="20%" align="left">Year</th>
+    <th width="20%" align="left">Instructor</th>  
+   </tr>
+  <tr>
+    <td>85</td>
+    <td>MATH2410</td>
+    <td>First</td>
+    <td>98</td>
+    <td>Jain</td>
+  </tr>
+
+<tr>
+    <td>92</td>
+    <td>CS1310</td>
+    <td>First</td>
+    <td>98</td>
+    <td>Rao</td>
+  </tr>
+
+<tr>
+    <td>102</td>
+    <td>CS3320</td>
+    <td>Second</td>
+    <td>92</td>
+    <td>Ramesh</td>
+  </tr>
+
+<tr>
+    <td>112</td>
+    <td>MATH2410</td>
+    <td>First</td>
+    <td>99</td>
+    <td>Ravendar</td>
+  </tr>
+<tr>
+    <td>119</td>
+    <td>CS1310</td>
+    <td>First</td>
+    <td>99</td>
+    <td>Rao</td>
+  </tr>
+<tr>
+    <td>135</td>
+    <td>CS3380</td>
+    <td>First</td>
+    <td>99</td>
+    <td>Srinivas</td>
+  </tr>
+  </table>
+  <br>
+<table class="Grade_Report" cellspacing="0" cellpadding="0" border="1">
+  <tr>
+    <th width="15%" align="left">Student Number</th>
+    <th width="20%" align="left">Section Identifier</th>
+    <th width="20%" align="left">Grade</th>
+  </tr>
+  <tr>
+    <td>17</td>
+    <td>112</td>
+    <td>B</td>
+    
+  </tr>
+
+<tr>
+    <td>17</td>
+    <td>119</td>
+    <td>C</td>
+    
+  </tr>
+<tr>
+    <td>8</td>
+    <td>85</td>
+    <td>A</td>
+  </tr>
+<tr>
+    <td>8</td>
+    <td>92</td>
+    <td>A</td>
+  </tr>
+<tr>
+    <td>8</td>
+    <td>102</td>
+    <td>B</td>
+    
+  </tr>
+<tr>
+    <td>8</td>
+    <td>135</td>
+    <td>A</td>
+  </tr>
+  </table>
+<br>
+<table class="Prerequisite" cellspacing="0" cellpadding="0" border="1">
+  <tr>
+    <th width="15%" align="left">Course Number</th>
+    <th width="20%" align="left">Prerequisite Number</th>
+  </tr>
+  <tr>
+    <td> CS3380</td>
+    <td>CS3320</td>
+  </tr>
+
+<tr>
+    <td>CS3380</td>
+    <td>MATH2410</td>
+  </tr>
+
+<tr>
+    <td>CS3320</td>
+    <td>CS1310</td>
+  </tr>
+  </table>
+
+   <br>
+
+<p> 
+Based on the above schema, write the SQL queries for the following questions
+
+<ul>
+<li> Retrieve all the Students majoring in CS.
+<li> Retrieve all the courses taught by Professor Jain in 1998
+<li> For each section taught by Prof. Jain, retrieve the course number, semester, year and number of the students whose took the course.
+<li> Retrieve names and major departments of all students who do not have a grade A in any of the courses
+<li> Indicate Primary Keys for each table
+<li> Indicate Foreign keys for each table
+</ul>      
+</div>
+
+{{{id=26|
+
+///
+}}}
+
+<div id="references">
+	<h2> References </h2>
+<p>
+<ol>
+<li> http://www.w3schools.com/sql/ </li>
+<li> Database management concepts by Elmasri, Navathe </li>
+<li> SQL for dummies, Orielly press</li>
+</ol>
+</p>
+</div>
+
+{{{id=27|
+
+///
+}}}

@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html>
+<!--<head></head>-->
+<h1 id="main-title">
+Second Normal Form
+</h1>
+</head>
+<div id="introduction">
+	<h2>Introduction </h2>
+	 <p>
+
+Second normal form (2NF) is a normal form used in database normalization. 2NF was originally defined by E.F. Codd in 1971. A table that is in first normal form (1NF) must meet additional criteria if it is to qualify for second normal form. Specifically: a 1NF table is in 2NF if and only if, given any candidate key K and any attribute A that is not a constituent of a candidate key, A depends upon the whole of K rather than just a part of it.
+
+In slightly more formal terms: a 1NF table is in 2NF if and only if all its non-prime attributes are functionally dependent on the whole of every candidate key. (A non-prime attribute is one that does not belong to any candidate key.)
+
+</p>
+</div>
+
+<div id="theory">
+	<h2>Theory/Procedure </h2>
+The general requirements of 2NF:
+
+<ul>
+  <li>Remove subsets of data that apply to multiple rows of a table and place them in separate tables.</li>
+
+  <li>Create relationships between these new tables and their predecessors through the use of foreign keys.</li>
+</ul>These rules can be summarized in a simple statement: 2NF attempts to reduce the amount of redundant data in a table by extracting it, placing it in new table(s) and creating relationships between those tables.<br>
+<br>
+Let's look at an example. Imagine an online store that maintains customer information in a database. They might have a single table called Customers with the following elements:
+
+<ul>
+  <li>CustNum</li>
+
+  <li>FirstName</li>
+
+  <li>LastName</li>
+
+  <li>Address</li>
+
+  <li>City</li>
+
+  <li>State</li>
+
+  <li>ZIP</li>
+</ul>A brief look at this table reveals a small amount of redundant data. We're storing the "Sea Cliff, NY 11579" and "Miami, FL 33157" entries twice each. Now, that might not seem like too much added storage in our simple example, but imagine the wasted space if we had thousands of rows in our table. Additionally, if the ZIP code for Sea Cliff were to change, we'd need to make that change in many places throughout the database.<br>
+<br>
+In a 2NF-compliant database structure, this redundant information is extracted and stored in a separate table. Our new table (let's call it ZIPs) might have the following fields:
+
+<ul>
+  <li>ZIP</li>
+
+  <li>City</li>
+
+  <li>State</li>
+</ul>If we want to be super-efficient, we can even fill this table in advance -- the post office provides a directory of all valid ZIP codes and their city/state relationships. Surely, you've encountered a situation where this type of database was utilized. Someone taking an order might have asked you for your ZIP code first and then knew the city and state you were calling from. This type of arrangement reduces operator error and increases efficiency.<br>
+<br>
+Now that we've removed the duplicative data from the Customers table, we've satisfied the first rule of second normal form. We still need to use a foreign key to tie the two tables together. We'll use the ZIP code (the primary key from the ZIPs table) to create that relationship. Here's our new Customers table:
+
+<ul>
+  <li>CustNum</li>
+
+  <li>FirstName</li>
+
+  <li>LastName</li>
+
+  <li>Address</li>
+
+  <li>ZIP</li>
+</ul>We've now minimized the amount of redundant information stored within the database and our structure is in second normal form!<br>
+
+</div>
+<div id="Simulation">
+	<h2>Simulation</h2>
+	 <p>
+
+Lets consider the following example of an employee database consisting of an employee, their skill, location and age.
+
+{{{id=1|
+table = """ Employee   Skill   Location Age """
+primary_key = """ Employee Skill """
+Dependencies = [ 
+                 'Employee : Location', 
+                 'Employee : Age'
+               ]
+///
+}}}
+
+After converting this table into Second normal form, the result would be as follows:
+
+{{{id=3|
+import re
+table = table.strip()
+tokens = re.split("\s+", table)
+for i in Dependencies:
+    rel = i.split(" : ")
+    l = []
+    l.append(rel[1].strip())
+    print rel[0],rel[1]
+    tokens = list(set(tokens) - set(l))
+for i in tokens:
+    print i,
+///
+Employee Location
+Employee Age
+Employee Skill
+}}}
+
+</p>
+</div>
+
+<div id="Quiz">
+	<h2>Quiz </h2>
+	 <p>
+<ol>
+<li> Convert the given relation Schema into Second Normal form. 
+EMP_PROJ (ENO, PNUMBER, HOURS, ENAME, PNAME, PLOCATION).
+<li> Consider the following Schema. CAR_SALE (Car#, Date_Sold, Salesman#, Commission%, Discount_amt). Convert it into Second Normal Form.
+<li> Consider the following relation for publised books. BOOK (Book_title, Authorname, Book_type, price, Author_aff, Publisher). Convert it into 2NF.
+
+
+</p>
+</div>
+
+
+<div id="References">
+	<h2>References </h2>
+	 <p>
+<ol>
+<li> http://en.wikipedia.org/wiki/Second_normal_form </li>
+<li> http://databases.about.com/od/administration/l/bldef_2nf.htm </li>
+<li> Database Management systems by Elmasri and Navathe </li>
+<li> http://publib.boulder.ibm.com/infocenter/idshelp/v10/index.jsp?topic=/com.ibm.ddi.doc/ddi54.htm </li>
+</ol>
+</p>
+</div>
+
+{{{id=5|
+
+///
+}}}

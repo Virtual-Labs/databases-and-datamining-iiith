@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html>
+<!--<head></head>-->
+<h1 id="main-title">
+Entity Relationship Model 
+</h1>
+</head>
+<div id="introduction">
+	<h2>Introduction </h2>
+	 <p>
+	 	 An entity-relationship model (ERM) is an abstract and conceptual representation of data. Entity-relationship modeling is a database modeling method, used to produce a type of conceptual schema or semantic data model of a system, often a relational database, and its requirements in a top-down fashion. Diagrams created by this process are called entity-relationship diagrams, ER diagrams, or ERDs.
+	</p>
+	<br>
+	
+ </div>
+<div id="theory">
+	<h2>Theory</h2> 
+	<p>
+	    The data modeling technique can be used to describe any ontology (i.e. an overview and classifications of used terms and their relationships) for a certain area of interest. In the case of the design of an information system that is based on a database, the conceptual data model is, at a later stage (usually called logical design), mapped to a logical data model, such as the relational model; this in turn is mapped to a physical model during physical design. There are a number of conventions for entity-relationship diagrams (ERDs). The classical notation mainly relates to conceptual modeling. The building blocks.
+	</p>
+	<h3> Entities, Relationships and Attributes </h3>
+	<p>
+	An entity may be defined as a thing which is recognized as being capable of an independent existence and which can be uniquely identified. An entity is an abstraction from the complexities of some domain. When we speak of an entity we normally speak of some aspect of the real world which can be distinguished from other aspects of the real world.[3]
+	</p>
+	<p>
+	An entity may be a physical object such as a house or a car, an event such as a house sale or a car service, or a concept such as a customer transaction or order. Although the term entity is the one most commonly used, following Chen we should really distinguish between an entity and an entity-type. An entity-type is a category. An entity, strictly speaking, is an instance of a given entity-type. There are usually many instances of an entity-type. Because the term entity-type is somewhat cumbersome, most people tend to use the term entity as a synonym for this term.
+	Entities can be thought of as nouns. Examples: a computer, an employee, a song, a mathematical theorem.
+
+	</p>
+	<p>
+	A relationship captures how two or more entities are related to one another. Relationships can be thought of as verbs, linking two or more nouns. Examples: an owns relationship between a company and a computer, a supervises relationship between an employee and a department, a performs relationship between an artist and a song, a proved relationship between a mathematician and a theorem.
+	</p>
+	<p>
+	Entities and relationships can both have attributes. Examples: an employee entity might have a Social Security Number (SSN) attribute; the proved relationship may have a date attribute.
+
+	Every entity (unless it is a weak entity) must have a minimal set of uniquely identifying attributes, which is called the entity's primary key.
+
+	Entity-relationship diagrams don't show single entities or single instances of relations. Rather, they show entity sets and relationship sets. Example: a particular song is an entity. The collection of all songs in a database is an entity set. The eaten relationship between a child and her lunch is a single relationship. The set of all such child-lunch relationships in a database is a relationship set. In other words, a relationship set corresponds to a relation in mathematics, while a relationship corresponds to a member of the relation.
+	</p>
+	<h3> Conventions </h3>
+	<p>
+	Entity sets are drawn as rectangles, relationship sets as diamonds. If an entity set participates in a relationship set, they are connected with a line.
+
+	Attributes are drawn as ovals and are connected with a line to exactly one entity or relationship set.
+
+	Cardinality constraints are expressed as follows:
+	<ol>
+		<li>
+	     A double line indicates a participation constraint, totality or surjectivity: all entities in the entity set must participate in at least one relationship in the relationship set;
+	     	</li>
+		<li>
+	     An arrow from entity set to relationship set indicates a key constraint, i.e. injectivity: each entity of the entity set can participate in at most one relationship in the relationship set;
+		</li>
+		<li>
+	     A thick line indicates both, i.e. bijectivity: each entity in the entity set is involved in exactly one relationship.
+		</li>
+		<li>
+	     An underlined name of an attribute indicates that it is a key: two different entities or relationships with this attribute always have different values for this attribute.
+		</li>
+	</ol>
+	</p>
+</div>
+
+<div id="objective">
+	<h2> Objective </h2> 
+	<p>
+	Conceptual modelling is a very important phase in designing a sucessful database application. Entity-Relationship Model and its variations are frequently used for the conceptual design of database applications, and many more database design tools employ this concepts.
+	</p> 
+</div>
+
+
+<div id="simulation">
+	<h2> Simulation </h2>
+	<br>
+        <p>  
+                  Consider the following set of requirements for a company database  <br> 
+ <ul>              
+    <li> The company keeps track of each employees's name, identification number and address. Employee identification number should have a unique value for each employee. The name and Age together form the key of the employee. 
+    <li> Each department is described by the attributes at1, at2 and at3.
+    <li>Each project has a project name and a project ID and the department to which under which it is assigned. 
+</ul>
+
+<h4>Constraints:</h4>
+   <ol>
+   <li><b>Employees</b> may be assigned to only 1 <b>department</b> at a time, each employee <i>must</i> be assigned to a particular department.
+   <li><b>Employees</b> may be assigned to <i>several</i> projects at once, each with an associated <b>%time</b>. 
+   <li><b>Employees</b> <i>need not</i> be assigned to any projects.
+</ol>
+
+The example below shows the input for designing the ER schema for the company database. All the entities, relations names are given and the attributes corresponding to that entity are shown as a list. The last element of the list indicates the key attributes of that entity. Ex: For the entity employee, the key attributes are (0,1), which means that Name and Age are the key attributes.
+</p>
+        <br>
+
+{{{id=1|
+Entities={
+  'Emp':['Name','Age','Salary',(0,1)],
+  'Project' :['Name','pid','DeptId',(1)],
+  'Dept': ['at5','at2','at3',(0)],
+  'Manager':['Name','Age',(0)]
+}
+
+Relations={
+  'Works on':['Emp','Project'],
+  'on':['Project','Dept']
+}
+///
+}}}
+
+{{{id=4|
+#auto
+%hideall
+def showER():
+    import re
+    ##entities=re.findall("<entity name=\w+>\s*<attributes>\s*[\w+\s+,]+\s*</attributes>\s*</entity>",Entities)
+    x=0
+    y=0
+    coord={}
+    P=""
+    cnt=0
+    for i in Entities:
+        ename = i;
+        coord[ename]=[x,y]
+        ##ename=re.findall("=\w+>",i)[0]
+        ##ename=re.sub("[=>]","",ename)
+        ##ename=ename.strip()
+        ##coord[ename]=[x,y]
+        x1=x
+        y1=y
+       
+        if(cnt==0):
+            P=line([(x-2,y-2), (x+2,y-2)]) + line([(x+2,y-2), (x+2,y+2)]) + line([(x+2,y+2), (x-2,y+2)]) + line([(x-2,y+2), (x-2,y-2)]) + text(ename, (x,y), axes=false)
+            cnt=1
+        else:
+            P+=line([(x-2,y-2), (x+2,y-2)]) + line([(x+2,y-2), (x+2,y+2)]) + line([(x+2,y+2), (x-2,y+2)]) + line([(x-2,y+2), (x-2,y-2)]) + text(ename, (x,y), axes=false)
+           
+      
+        attributes = Entities[i] 
+        ##attributes=i.split("<attributes>")[1];
+        ##attributes=attributes.split("</attributes>")[0]
+        ##attr=attributes.split(",")
+        lc=0;
+        for j in range(len(attributes)-1):
+            attributes[j]=attributes[j].strip()
+            if(lc==0):
+                x1=x-4
+                y1=y-4
+                P+=line([(x1,y1+1),(x-2,y-2)])
+            if(lc==1):
+                x1=x+4
+                y1=y-4
+                P+=line([(x1,y1+1),(x+2,y-2)])
+            if(lc==2):
+                x1=x+4
+                y1=y+4
+                P+=line([(x1,y1-1),(x+2,y+2)])
+            if(lc==3):
+                x1=x-4
+                y1=y+4
+                P+=line([(x1,y1-1),(x-2,y+2)])
+            lc+=1   
+            P+=ellipse((x1,y1),2,1, axes=false) + text(attributes[j],(x1,y1))
+        if(x==0):
+            x=20
+        else:
+            x=0
+            y+=20
+    ##relations=re.findall("<relation name=\w+>\s*[\w+,]+\s*</relation>",Relations)
+    
+    for i in Relations:
+        rname = i
+        enames = Relations[i]
+        ##rname=re.findall("=\w+",i)[0]
+        ##rname=rname.replace("=","")
+        ##enames=re.findall("[\w+,]+",i)[3]
+        ##enames=enames.strip()
+        ##enames=enames.split(",")
+        x1=coord[enames[0]][0]
+        x2=coord[enames[1]][0]
+        y1=coord[enames[0]][1]
+        y2=coord[enames[1]][1]
+        xr=(x1 + x2)/2
+        yr=(y1 + y2)/2
+         
+        P+=line([(xr-2,yr),(xr,yr+2)]) + line([(xr,yr+2),(xr+2,yr)]) + line([(xr+2,yr),(xr,yr-2)]) + line([(xr,yr-2),(xr-2,yr)]) + text(rname,(xr,yr))
+        if(yr==y1):
+            if(xr>x1):
+                P+=line([(xr-2,yr),(x1+2,yr)]) + line([(xr+2,yr),(x2-2,yr)])
+            else:
+                P+=line([(xr-2,yr),(x2+2,yr)]) + line([(xr+2,yr),(x1-2,yr)])
+        else:
+            if(yr>y1):
+                P+=line([(xr,yr-2),(x1,y1+2)]) + line([(xr,yr+2),(x2,y2-2)])
+            else:
+                P+=line([(xr,yr-2),(x1,y2+2)]) + line([(xr,yr+2),(x2,y1-2)])
+                       
+                    
+      
+    #P=line([(x,y), (5,5)]) + line([(0,0), (1,1)]) + line([(2,0), (1,1)]) + line([(2,0), (1,-1)]) + line([(0,0), (1,-1)]) + text(Name, (1,0), axes=false)+ arrow((2,0), (3,2))
+    P.show(axes=false)
+///
+}}}
+
+{{{id=3|
+showER()
+///
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+<!--	<embed src="PendulumForces.swf" /> -->
+</div>
+
+
+<div id="quizzes">
+	<h2>Quiz</h2> 
+	<p>
+	Consider the following set of requirements for university database
+	<ul>
+	<li> The university keeps track of each student's name, student number, current address, phone, sex, section, course, department. Student number should have a unique value for each student </li>
+	<li> Each department is described by a name, department code, office number, office phone and college. Both name and code have unique value</li>
+	<li> Each course has a course name, description, course number, number of semester hours, level and offering departments. The value of course number is unique for each course.  </li>
+	<li> Each section has an instructor, semester, year, course and section number. The section number distinguishes sections of the same course that are thought during the same semester/year; Its values are 1,2,3.. up to the numer of sections taught during each semester.</li>
+	</ul>
+	Design an ER schema for this application and draw an ER diagram for that schema. Specify key attributes of each entity type and stuctural constraints on each relationship type. Note any unspecified requirements and make appropriate assumptions to make the specifications complete.
+	</li>
+	</ul>
+	</p> 
+</div>
+
+<div id="readings"> 
+	<h2> Further-readings </h2> 
+	<ol>	
+		<li>
+		<a href="http://en.wikipedia.org/wiki/Entity-relationship_model">http://en.wikipedia.org/wiki/Entity-relationship_model</a>
+		</li>
+		<li>
+		<a href="http://www.cs.sfu.ca/CC/354/zaiane/material/notes/Chapter2/node1.html">http://www.cs.sfu.ca/CC/354/zaiane/material/notes/Chapter2/node1.html</a>
+		</li> 
+ 		<li>
+		“Fundamentals of Database Systems" by Elmasri and Navathe. 
+		</li> 
+ 		<li>
+		<a href="http://www.databaseanswers.org/modelling_tools.htm">
+		Data Modelling Tools
+		</a> 
+		</li>
+	</ol>
+</div>
+
+{{{id=6|
+
+///
+}}}
+
+{{{id=5|
+
+///
+}}}

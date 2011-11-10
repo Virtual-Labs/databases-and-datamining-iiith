@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<!--<head></head>-->
+<h1 id="main-title">
+SQL-III
+</h1>
+</head>
+<div id="introduction">
+	<h2>Introduction </h2>
+	 <p>
+	 	In this chapter, we discuss SQL operations for viewing the contents of an SQL database, and various operation that we can do using SQL.
+	</p>
+ </div>
+
+<div id="Procedure">
+	<h2>Procedure</h2> 
+	<p>
+In this section, we describe the methods we follow to view the contents of a database, and some SQL aggregate functions, like Average, sum, group by, etc. Detailed examples on the usage of these commands is given in the simulation section below.
+
+<ol>
+<li>To view the contents of a database, we use the "select * form <tablename>". There are many variants of the select command, which are described in the simulation section below.</li>
+<p>SQL aggregate functions return a single value, calculated from values in a column.</p>
+<p>Useful aggregate functions:</p>
+<ul>
+	<li>AVG() - Returns the average value</li>
+	<li>COUNT() - Returns the number of rows</li>
+
+	<li>FIRST() - Returns the first value</li>
+	<li>LAST() - Returns the last value</li>
+	<li>MAX() - Returns the largest value</li>
+	<li>MIN() - Returns the smallest value</li>
+	<li>SUM() - Returns the sum</li>
+</ul>
+
+</ol>
+
+</p>
+</div>
+
+
+
+<div id="theory">
+	<h2>Simulation</h2> 
+	<p>
+	    In the previous chapter, we saw how we can populate the database, how we can delete rows from the database and how we can update the content of the tables, in this chapter, we will look at SQL commands to use the populated information. We will have a look at using the data from the tables and performing various functions like groupby, aggregate functions, etc.
+
+In the previous chapters, we created a database of a university.
+
+{{{id=1|
+#auto
+
+import sqlite3
+conn = sqlite3.connect('university')
+curs = conn.cursor()
+def sql(c): curs.execute(c)
+///
+}}}
+
+{{{id=30|
+
+///
+}}}
+
+We then created a database of Students, Professors and the courses taught by them.
+
+{{{id=24|
+sql('DROP TABLE Students')
+sql('DROP TABLE Professors')
+sql('DROP TABLE Courses')
+sql('DROP TABLE Marks_Course')
+sql('CREATE TABLE Students(RollNo integer NOT NULL,Name char(30), BDay date, year integer)')
+sql('''CREATE TABLE Professors (P_Id int NOT NULL, Name varchar(255) NOT NULL, Address varchar(255), PRIMARY KEY (P_Id))''')
+sql('''CREATE TABLE Courses (Course_Id int NOT NULL, CourseName int NOT NULL, P_Id int, PRIMARY KEY (Course_Id), FOREIGN KEY (P_Id) REFERENCES Professor(P_Id))''')
+sql('CREATE TABLE Marks_Course (RollNo int, Course_Id int, Marks int)')
+///
+Traceback (most recent call last):    sql('''CREATE TABLE Courses (Course_Id int NOT NULL, CourseName int NOT NULL, P_Id int, PRIMARY KEY (Course_Id), FOREIGN KEY (P_Id) REFERENCES Professor(P_Id))''')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmp_2iPeg/___code___.py", line 2, in <module>
+    sql('DROP TABLE Students')
+  File "/tmp/tmpjoq1fs/___code___.py", line 5, in sql
+    def sql(c): curs.execute(c)
+sqlite3.OperationalError: no such table: Students
+}}}
+
+We populated the tables using various values
+
+</p>
+
+{{{id=28|
+#auto
+%hideall
+def query(c):
+    sql(c)
+    results = curs.fetchall()
+    for row in results:
+        for attr in row:
+            print str(attr)+ " ",
+        print
+///
+}}}
+
+<hr>
+
+<h3> Viewing contents of a database </h3>
+	<p>
+The SELECT statement is used to select data from a database.
+
+The result is stored in a result table, called the result-set. There are two main variations of the SELECT command.
+<br>
+(i) SELECT column_name(s) FROM table_name, which presents only the column "column_name". 
+<br>
+(ii) SELECT * FROM table_name, which presents the entire table.
+
+{{{id=7|
+query('SELECT Name FROM Students')
+query('SELECT * FROM Students')
+///
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "_sage_input_33.py", line 10, in <module>
+    exec compile(u'open("___code___.py","w").write("# -*- coding: utf-8 -*-\\n" + _support_.preparse_worksheet_cell(base64.b64decode("cXVlcnkoJ1NFTEVDVCBOYW1lIEZST00gU3R1ZGVudHMnKQpxdWVyeSgnU0VMRUNUICogRlJPTSBTdHVkZW50cycp"),globals())+"\\n"); execfile(os.path.abspath("___code___.py"))' + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmpwjSHwT/___code___.py", line 2, in <module>
+    query('SELECT Name FROM Students')
+  File "/tmp/tmp02o6Fb/___code___.py", line 3, in query
+    sql(c)
+  File "/tmp/tmpjoq1fs/___code___.py", line 5, in sql
+    def sql(c): curs.execute(c)
+sqlite3.OperationalError: no such table: Students
+}}}
+
+{{{id=8|
+query('SELECT * FROM Students')
+///
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "_sage_input_34.py", line 10, in <module>
+    exec compile(u'open("___code___.py","w").write("# -*- coding: utf-8 -*-\\n" + _support_.preparse_worksheet_cell(base64.b64decode("cXVlcnkoJ1NFTEVDVCAqIEZST00gU3R1ZGVudHMnKQ=="),globals())+"\\n"); execfile(os.path.abspath("___code___.py"))' + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmp4iYJ37/___code___.py", line 2, in <module>
+    exec compile(u"query('SELECT * FROM Students')" + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmp02o6Fb/___code___.py", line 3, in query
+    sql(c)
+  File "/tmp/tmpjoq1fs/___code___.py", line 5, in sql
+    def sql(c): curs.execute(c)
+sqlite3.OperationalError: no such table: Students
+}}}
+
+</p>
+
+<hr />
+<h3> Aggregate functions </h3>
+<p>SQL aggregate functions return a single value, calculated from values in a column.</p>
+<p>Useful aggregate functions:</p>
+<ul>
+	<li>AVG() - Returns the average value (SELECT AVG(column_name) FROM table_name)</li>
+	<li>COUNT() - Returns the number of rows (SELECT COUNT(column_name) FROM table_name)</li>
+	<li>FIRST() - Returns the first value</li>
+	<li>LAST() - Returns the last value</li>
+
+	<li>MAX() - Returns the largest value</li>
+	<li>MIN() - Returns the smallest value</li>
+	<li>SUM() - Returns the sum</li>
+</ul>
+
+A few examples of aggregate functions are given below.
+
+{{{id=9|
+query('SELECT AVG(Marks) from Marks_Course')
+query('SELECT MAX(Marks) from Marks_Course')
+query('SELECT count(Marks) from Marks_Course')
+query('SELECT SUM(Marks) from Marks_Course')
+///
+None 
+None 
+0 
+None 
+}}}
+
+<hr />
+
+<h3> GROUP BY </h3>
+<p>
+The GROUP BY statement is used in conjunction with the aggregate functions to group the result-set by one or more columns. The syntax of GROUP BY is: 
+<p>
+SELECT column_name, aggregate_function(column_name) 
+FROM table_name
+WHERE column_name operator value
+GROUP BY column_name
+</p>
+
+So, inorder to get the sum of marks obtained by all students in a course, we can use the following query:
+
+{{{id=18|
+query('SELECT Course_Id,SUM(Marks) FROM Marks_Course GROUP BY Course_Id')
+///
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "_sage_input_35.py", line 10, in <module>
+    exec compile(u'open("___code___.py","w").write("# -*- coding: utf-8 -*-\\n" + _support_.preparse_worksheet_cell(base64.b64decode("cXVlcnkoJ1NFTEVDVCBDb3Vyc2VfSWQsU1VNKE1hcmtzKSBGUk9NIE1hcmtzX0NvdXJzZSBHUk9VUCBCWSBDb3Vyc2VfSWQnKQ=="),globals())+"\\n"); execfile(os.path.abspath("___code___.py"))' + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmpXccVna/___code___.py", line 2, in <module>
+    exec compile(u"query('SELECT Course_Id,SUM(Marks) FROM Marks_Course GROUP BY Course_Id')" + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmp02o6Fb/___code___.py", line 3, in query
+    sql(c)
+  File "/tmp/tmpjoq1fs/___code___.py", line 5, in sql
+    def sql(c): curs.execute(c)
+sqlite3.OperationalError: no such table: Marks_Course
+}}}
+
+</p>
+
+<hr />
+
+
+<h3> SQL HAVING Clause  </h3>
+
+	<p>The HAVING clause was added to SQL because the WHERE keyword could not be used with aggregate functions.
+
+In the above query, we can get the courses in which the sum of marks is greater than 100 by using the HAVING clause.
+
+{{{id=17|
+query('SELECT Course_Id,sum(Marks) FROM Marks_Course GROUP BY Course_Id HAVING sum(Marks)>100')
+///
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "_sage_input_36.py", line 10, in <module>
+    exec compile(u'open("___code___.py","w").write("# -*- coding: utf-8 -*-\\n" + _support_.preparse_worksheet_cell(base64.b64decode("cXVlcnkoJ1NFTEVDVCBDb3Vyc2VfSWQsc3VtKE1hcmtzKSBGUk9NIE1hcmtzX0NvdXJzZSBHUk9VUCBCWSBDb3Vyc2VfSWQgSEFWSU5HIHN1bShNYXJrcyk+MTAwJyk="),globals())+"\\n"); execfile(os.path.abspath("___code___.py"))' + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmp3W_wK6/___code___.py", line 2, in <module>
+    exec compile(u"query('SELECT Course_Id,sum(Marks) FROM Marks_Course GROUP BY Course_Id HAVING sum(Marks)>100')" + '\n', '', 'single')
+  File "", line 1, in <module>
+    
+  File "/tmp/tmp02o6Fb/___code___.py", line 3, in query
+    sql(c)
+  File "/tmp/tmpjoq1fs/___code___.py", line 5, in sql
+    def sql(c): curs.execute(c)
+sqlite3.OperationalError: no such table: Marks_Course
+}}}
+
+</p>
+</div>
+
+<div id="references">
+	<h2> References </h2>
+<p>
+<ol>
+<li> http://www.w3schools.com/sql/ </li>
+<li> Database management concepts by Elmasri, Navathe </li>
+<li> SQL for dummies, Orielly press</li>
+</ol>
+</p>
+</div>
+
+</html>
+
+{{{id=29|
+
+///
+}}}
