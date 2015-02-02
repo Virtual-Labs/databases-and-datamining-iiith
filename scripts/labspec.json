@@ -4,10 +4,21 @@
             "platform": {
                 "arch": "i386", 
                 "build_steps": {
-                    "build": ["make -C ../src"], 
+                    "build": ["sh create_sagenb", "make all -C ../src",  "sh start_sage"], 
                     "configure": [], 
                     "post_build": [], 
-                    "pre_build": [], 
+                    "pre_build": ["sudo apt-get update",
+                    "sudo apt-get remove -y apache2",
+                    "sudo apt-get purge -y apache2*",
+                    "sudo apt-get autoremove -y",
+                "sudo apt-get install -y make m4 build-essential gcc gfortran libssl-dev",
+                "sudo apt-get install -y python-software-properties",
+                "sudo apt-get update",
+                "sudo apt-add-repository -y ppa:aims/sagemath",
+                "sudo apt-get update",
+                "sudo apt-get install -y dvipng",
+                "sudo apt-get install -y sagemath-upstream-binary"
+                ], 
                     "status": []
                 }, 
                 "installer": [], 
@@ -52,9 +63,9 @@
             "discipline": [
                 "Computer Science & Engineering"
             ], 
-            "id": "cse07", 
+            "id": "cse06", 
             "integration_level": 5, 
-            "name": "Databases", 
+            "name": "Data Mining", 
             "server-side": true, 
             "status": "Released", 
             "type": ""
@@ -63,11 +74,11 @@
             "platform": {
                 "arch": "i386", 
                 "hosting": "dedicated", 
-                "installer": ["sudo apt-get update","sudo apt-get install -y php5 apache2"], 
+                "installer": [], 
                 "lab_actions": {
                     "backup": [], 
                     "clean": [], 
-                    "init": ["mv /var/www/index.html index.html.default", "cp -r ../build/* /var/www/","chmod 775 /var/www/ -R"], 
+                    "init": [], 
                     "pause": [], 
                     "publish": [], 
                     "restore": [], 
