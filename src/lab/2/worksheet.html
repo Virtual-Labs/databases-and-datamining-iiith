@@ -1,0 +1,267 @@
+
+
+<center>
+<img src="http://virtual-labs.ac.in/images/virtualLabsLogo.jpg" width="1220" alt="logo"/> 
+</center>
+
+<h1 style="color: green;">The Apriori Algorithm</h1>
+<h2 style="color: green;">Introduction</h2>
+<p>
+In data mining, association rule learning is a popular and well researched method for discovering interesting relations between variables in large databases. For example, the rule <b>&#123;onions, potatoes&#125; $\longrightarrow$ &#123;burger&#125;</b> found in the sales data of a supermarket would indicate that if a customer buys onions and potatoes together, he or she is likely to also buy burger. Such information can be used as the basis for decisions about marketing activities such as, e.g., promotional pricing or product placements. In addition to the above example from market basket analysis association rules are employed today in many application areas including web usage mining, intrusion detection and bioinformatics.
+</p>
+
+<h2 style="color: green;">Objective</h2>
+<p>
+Through this experiment we will explain frequent patterns and an efficient algorithm to discover them (Apriori) from large datasets.
+In data mining, Apriori is a classic algorithm for learning association rules. Apriori is designed to operate on databases containing transactions (for example, collections of items bought by customers, or click-streams of a websites).
+</p>
+
+<h2 style="color: green;">Theory</h2>
+
+<h3>Problem Formulation:</h3>
+<ol>
+<li>Set of items: $I$</li>
+<li>Set of transactions: $D$ ($t \in D \Rightarrow  t \subseteq I$)</li>
+<li>For an itemset $X \subseteq I$</li>
+<li>$support(X)$ = number of transactions containing $X / |D|$</li>
+<li>Association rule: r=(X-Y &#61; &#62; Y), with Y &#8834; X &#8838; I  </li>
+<li>Support(r) = Support(X)</li>
+<li>Confidence(r) = Support(X)/Support(X-Y) where X-Y is the set difference </li>
+<li><b>INPUT:</b> (I, D, minsup, minconf) with 0 &#60;&#61; minsupport &#60;&#61; 1 and 0 &#60;minconfidence&#60;1 </li>
+<li><b>OUTPUT:</b> all rules r s.t. support(r) &#62;&#61; minsupport and confidence(r) &#62;&#61;minconfidence </li>
+</ol>
+
+<h3>Psuedo Code:</h3>
+<pre>
+Apriori (T, minsupport)<br />
+{
+	L<sub>1</sub>  &#60;- large 1-itemsets 
+	k &#60;- 2
+        while L<sub>k-1</sub> &ne; &#934; 
+            C<sub>k</sub> &#60;- Generate(L<sub>k - 1</sub>) //The candidate generation proceedure where a
+	    candidate c = {A<sup>1</sup>,...A<sup>n</sup>} is generated if for all A<sup>i</sup> &#949; c, (c - A<sup>i</sup>) &#949; L<sub>k - 1</sub>
+
+            for transactions t &#949; T
+                C<sub>t</sub> &#60;- Subset(C<sub>k</sub>,t)
+                for candidates c &#949; C<sub>t</sub>
+                    count&#91;c&#93;- count&#91;c&#93;+1 
+            L<sub>k</sub> &#60;- &#123; c &#949;  C<sub>k</sub> | count&#91;c&#93; &#62;&#61; minsupport  
+            k &#60;- k+1 
+        return &#8746; L<sub>k</sub>
+}
+</pre>
+
+<h2 style="color: green;">Procedure</h2>
+
+<br />
+We present the Apriori simulation in the next section. Some points to note are as follows:<br />
+
+<ol>
+<li>
+The minimum support for the experiment is 0.6
+</li>
+<li> Clicking on 'evaluate' will run the algorithm.</li>
+</ol>
+
+<h2 style="color: green;">Simulation</h2>
+
+Consider the following dataset:<br /><br /><br />
+
+{{{id=2|
+#auto
+data = [
+('A','C','D','F','G','I','M','P'), #each row here is a record, or a market basket with several items
+('A','B','C','F','L','M','O'),
+('B','F','H','J','O'),
+('B','C','K','P'),
+('A','C','E','F','L','M','N','P')
+]
+///
+}}}
+
+{{{id=13|
+
+///
+}}}
+
+You may change the data above and click on 'evaluate' if you want to try out the algorithm with a different sample dataset. Note: If you are unable to change the data, you may have not yet logged in. To experience the interactive content on this page, you must first <a href="http://sage.virtual-labs.ac.in">login</a>.
+
+{{{id=7|
+#auto
+minsup = 0.5
+///
+}}}
+
+You may choose a different minsup threshold by clicking above. Don't forget to click on 'evaluate' after you change the threshold.
+
+Following is the AprioriGen function that takes as input $F$, a set of frequent itemsets; and outputs the next level of candidate itemsets. The supports of these candidate itemsets need to be measured by scanning the dataset. This function is used by the Apriori algorithm shown later.
+
+{{{id=3|
+#auto
+def AprioriGen(F):
+    C  = {}
+    for x in F:
+        for y in F:
+            if len(x) == len(y): #in general case this may be required
+                z = set(x)|set(y)
+                if len(z) == len(x)+1: #true if x and y share all items except 1
+                    prune = False
+                    z = list(z)
+                    z.sort()
+                    for i in range(len(z)): #remove each item from z
+                        item = z.pop(i)
+                        if tuple(z) not in F: #is subset of z in F ?
+                            prune = True
+                            break
+                        z.insert(i,item)
+                    if not prune:
+                        C[tuple(z)] = 0
+    return C
+///
+}}}
+
+Finally, here is the code for the Apriori algorithm. It runs by scanning the dataset several times. The first time, it outputs frequent itemsets of length 1, and in general, in scan $k$, it outputs frequent itemsets of length $k$.
+
+{{{id=5|
+#auto
+def apriori(data, minsup):
+    mincount = int(math.ceil(len(data) * minsup))
+    print 'mincount =', mincount
+    C = {}
+    F = {}
+
+    #--- first scan
+    for r in data:
+        r = list(r)
+        r.sort()
+        r = tuple(r)
+        for i in r:
+            if (i,) in C: C[(i,)] += 1
+            else: C[(i,)] = 1
+
+    Fk = dict((s,count) for s,count in C.iteritems() if count >= mincount)
+    F.update(Fk)
+    print '\nC1:-------------\n',C
+
+    C = AprioriGen(Fk)
+    print '\nF1:-------------\n',Fk
+    print '\nC2:-------------\n',C
+
+    #--- more scans
+    k = 2
+    while len(C) > 0:
+        for r in data:
+            sr = set(r)
+            for s in C:
+                if set(s) <= sr:
+                    C[s] += 1
+
+        Fk = dict((s,count) for s,count in C.iteritems() if count >= mincount)
+        F.update(Fk)
+        C = AprioriGen(Fk)
+        print '\nF%d:-------------\n'%k,Fk
+        print '\nC%d:-------------\n'%(k+1),C
+        k += 1
+    return F
+///
+}}}
+
+This is just a call to the apriori function. Clicking on 'evaluate' in this cell will show the output of Apriori.
+
+{{{id=4|
+F = apriori(data, minsup)
+print '\nResult:', F
+///
+mincount = 3
+
+C1:-------------
+{('N',): 1, ('A',): 3, ('C',): 4, ('I',): 1, ('B',): 3, ('H',): 1, ('E',): 1, ('K',): 1, ('D',): 1, ('J',): 1, ('G',): 1, ('P',): 3, ('M',): 3, ('F',): 4, ('L',): 2, ('O',): 2}
+
+F1:-------------
+{('A',): 3, ('C',): 4, ('B',): 3, ('P',): 3, ('M',): 3, ('F',): 4}
+
+C2:-------------
+{('C', 'F'): 0, ('B', 'C'): 0, ('B', 'M'): 0, ('F', 'M'): 0, ('A', 'F'): 0, ('A', 'M'): 0, ('A', 'P'): 0, ('M', 'P'): 0, ('C', 'M'): 0, ('F', 'P'): 0, ('B', 'F'): 0, ('A', 'B'): 0, ('B', 'P'): 0, ('A', 'C'): 0, ('C', 'P'): 0}
+
+F2:-------------
+{('C', 'F'): 3, ('F', 'M'): 3, ('A', 'F'): 3, ('A', 'M'): 3, ('C', 'M'): 3, ('A', 'C'): 3, ('C', 'P'): 3}
+
+C3:-------------
+{('A', 'F', 'M'): 0, ('A', 'C', 'F'): 0, ('A', 'C', 'M'): 0, ('C', 'F', 'M'): 0}
+
+F3:-------------
+{('A', 'F', 'M'): 3, ('A', 'C', 'F'): 3, ('A', 'C', 'M'): 3, ('C', 'F', 'M'): 3}
+
+C4:-------------
+{('A', 'C', 'F', 'M'): 0}
+
+F4:-------------
+{('A', 'C', 'F', 'M'): 3}
+
+C5:-------------
+{}
+
+Result: {('C', 'F'): 3, ('A',): 3, ('A', 'C', 'F'): 3, ('A', 'C', 'M'): 3, ('F', 'M'): 3, ('C',): 4, ('B',): 3, ('A', 'F'): 3, ('A', 'M'): 3, ('A', 'F', 'M'): 3, ('C', 'M'): 3, ('P',): 3, ('M',): 3, ('F',): 4, ('C', 'F', 'M'): 3, ('A', 'C', 'F', 'M'): 3, ('A', 'C'): 3, ('C', 'P'): 3}
+}}}
+
+{{{id=12|
+
+///
+}}}
+
+<h2 style="color: green;">Assignment</h2>
+<ol>
+<li>
+
+Define min-support and min-confidence with an example.
+</li>
+<li>
+Find all frequent itemsets using apriori<br /><br />
+<table border = '1' cellspacing='0px' cellpadding='5px'>
+<tr><th>TID</th><th>items_bought</th></tr>
+<tr><td>T100</td><td>{M, O, N, K, E, Y}</td></tr>
+<tr><td>T200</td><td>{D, O, N, K, E, Y}</td></tr>
+<tr><td>T300</td><td>{M, A, K, E}</td></tr>
+
+<tr><td>T400</td><td>{M, U, C, K, Y}</td></tr>
+<tr><td>T500</td><td>{C, O, O, K, I, E}</td></tr>
+</table><br />
+Minimum support = 60%, minimum confidence = 80%<br /><br />
+</li>
+<li>
+Compute the frequent itemsets for the same datasets for minimum support 30% and confidence 80%. Comment on the number 
+of rules output in both cases.<br /><br />
+</li>
+</ol>
+
+<h2 style="color: green;">References</h2>
+				<ul>
+				<li>
+				R. Agarwal, T. Imielinski and A. Swami. Mining Association Rules between sets of items in large databases. In Proc. 1993 ACM SIGMOD Intl. Conf. Management of Data (SIGMOD 93), Pg. 207-216, Washington D.C., May 1993.
+				</li>
+				<li>
+				R. Agarwal and R. Srikant. Fast Algorithms for mining association rules in large databases. In research report RJ 9839, IBM Almaden Research Center, San Jose, CA, June, 1994.
+				</li>
+				<li>
+				R. Agarwal and R. Srikant. Fast Algorithms for mining association rules. In Proc. 1994 Int. Conf. Very Large Databases (VLDB 94), Pg. 487-499, Santiago, Chile, Sept 1994.
+				</li>
+
+				<li>
+				R. Agarwal, M. Mehta, J. Shafer, R. Srikant, A. Arning, T. Bollinger. The Quest data mining system. In Proc. 1996 Int. Conf. Data Mining and Knowledge Discovery (KDD '96)
+				</li>
+				<li>
+				S. Brin, R. Motwani, C. Silverstein. Beyond market basket: Generalizing association rules to correaltions. In Proc. 1997, ACM SIGMOD, Int. Conf Management of Data (SIGMOD '97), Pg. 265-276, Tucson, AZ, May 1997.
+				</li>
+				</ul>
+
+<br />
+For providing <b>Feedback</b> please click <a href="http://virtual-labs.ac.in/feedback/">here</a>.<br />
+
+<br />
+- Sponsored by MHRD: <a href="http://virtual-labs.ac.in/nmeict/" target="_blank">click</a>
+- Licensing Terms: <a href="http://virtual-labs.ac.in/licensing/" target="_blank">click</a>
+
+{{{id=11|
+
+///
+}}}

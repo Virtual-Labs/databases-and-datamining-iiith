@@ -1,0 +1,428 @@
+
+
+<center>
+<img src="http://virtual-labs.ac.in/images/virtualLabsLogo.jpg" width="1220" alt="logo"/> 
+</center>
+
+<h1 style="color: green;">The Decision-Tree Algorithm</h1>
+<h2 style="color: green;">Introduction</h2>
+<p>Classification is a supervised data mining procedure in which individual items are placed into groups based on quantitative information on one or more characteristics inherent in the items (referred to as traits, variables, characters, etc) and based on a training set of previously labeled items. Classification can be thought of as two separate problems - binary classification and multiclass classification. A very familiar example of binary classification is the email spam-catching system: given a set of emails marked as spam and not-spam, it learns the characteristics of spam emails and is then able to process future email messages to mark them as spam or not-spam. It may be noted that the classes in this case are "spam" and "not-spam"</p>
+<h2 style="color: green;">Objective</h2>
+<p>Through this experiment we will explain classification using the decision-tree classification algorithm on a standard dataset.</p>
+<h2 style="color: green;">Theory</h2>
+<p>The decision tree algorithm is a method for classifying objects based on a tree structure, where every internal node of the tree contains a test condition and every lea f node has an associated class label.  In other words, a decision tree is a flow-chart-like tree structure, where each internal node denotes a test on an attribute, each branch represents an out-come of the test, and leaf nodes represent classes or class distribution. In order to classify an unknown sample, the attribute values of the sample are tested against the decision tre. A path is traced from the root to a leaf node that holds the class prediction for that sample. Decision trees have been used in many application areas ranging from medicine to game theory and business.</p>
+<p>Given a set of observations {(x<sub>1</sub>, y<sub>1</sub>), (x<sub>2</sub>, y<sub>2</sub>) ..., (x<sub>n</sub>, y<sub>1</sub>)}, where each observation is a d-dimensional real vector with the class label, decison tree algorithm attempts to assign a class label for an unseen test observation.</p>
+<p>The decision tree algorithm starts off by building a decision tree given training data. A psuedo code for building the decision tree is as follows:</p>
+<p><strong>Algorithm:</strong> Generate_decision_tree. Generates a decision tree from the given training data.</p>
+<p><strong>Input:</strong> The training samples, attribute list.</p>
+<p><strong>Output: </strong>A decision tree.</p>
+<pre>Generate_decision_tree(Training Data, Attribute List)
+{
+	create a node N;<br /><pre><pre>      if samples are all of the same class, C then<br />             return N as a leaf node labeled with class C;<br />      if <em>attribute-list</em> is empty then<br />             return N as a leaft node labeled with the most common class in samples; //majority voting<br />      from among attributes in the <em>attribute-list</em>, select test attribute that leads to the highest information gain<br />      label node N with the <em>test-attribute</em>;<br />      for each known value ai of <em>test-attribute</em> //partition the samples<br />             grow a branch from node N for the condition <em>test-attribute = ai</em><br />             let <em>si</em> be the set of samples in the <em>samples</em> <em>for </em>which<em> test-attribute =</em><em> ai</em><br />             if <em>si</em> is empty then <br />                   attach a leaf labelled with the most common class in <em>samples</em>;<br />             else<br />                   attach the node returned by <em>Generate_decision_tree(si, Attribute List - test-attribute)</em>;
+}
+</pre>
+</pre>
+</pre>
+<p>The basic algorithm for decision tree induction is a greedy algorithm that constructs decision trees in a top-down recursive divide-and-conquer manner. The algorithm summarized above is a version od <em>ID3</em>, a well known decision tree induction algorithm. The basic strategy is as follows.</p>
+<ul>
+<li>The tree starts as a single node representing the training samples (line 1)</li>
+<li>If the samples are all of the same class, then the node becomes a leaf and is labeled with that class (lines 2 and 3)</li>
+<li>Otherwise the algrithm uses an entropy based measure known as information gain as a heuristic for selecting the attribute that will best seperate samples into individual classes (line 6). This atribute becomes the <em>test</em> or <em>decision </em>attribute at node (line 7). Continuous values (if they exist) must be discretized. </li>
+<li>A branch is created for each known value of the test attribute, and the samples are partitiond accordingly (lines 8-10).</li>
+<li>The algorithm uses the same process recursively to form a decision tree for the samples at each partition. Once an attribute has occured at a node, it need not be considered in any of the node's descendants (continuous attributes may be considered at multiple levels if the mode of discretization is different at these levels) (line 13).</li>
+</ul>
+<p>The recursive partitioning stops only when any one of the following conditions is true:</p>
+<ul>
+<li>All samples for a given node belong to the same class (lines 2-3) or,</li>
+<li>There are no remaining attributes on which the samples may be further partitioned (line 4). In this case, majority voting is employed (line 5). This involves converting the given node into a leaf and labeling it with the class in majority among <em>samples. </em>Alternatively, the class distribution of the node samples may be stored.</li>
+<li>There are no samples for the branch <em>test-attribute=ai </em>(line 11). In this case, a leaf is created with the majority of samples (line 12)</li>
+</ul>
+<h2 style="color: green;">Attribute Selection Measure</h2>
+<p style="color: green;"><span style="color: #000000;">The <strong><em>information gain</em></strong> </span><span style="color: #000000;">measure is used to select the the test attribute at each node in the tree. Such a measure is referred to as an <em>attribute selection measure</em> or a <em>measure of the goodness of split.</em> The attribute with the <em>highest information gain (or greatest entropy reduction) </em>is chosen as the test attribute for the current node. This attribute minimizes the information needed to classify the samples in the resulting partitions and reflects least randomness or <em>impurity </em>in these partitions. Such an<em> information-theoretic</em> approach minimizes the experected number of tests needed to classify an object.</span></p>
+<p style="color: green;"><span style="color: #000000;">Let <em>S</em> be a set consisting of <em>s </em>data samples. Suppose the class label attribute has <em>m </em>distinct values defining <em>m</em> distinct classes, $C_i$ = (for i = 1,...,m). Let $s_i$, be the number of samples of S in class Ci. The expected information needed to classify a given sample is given by :</span></p>
+<p style="color: green;"><span style="color: #000000;">$I(S) = - \sum_{i=1}^{i=m}p_i log_2(p_i)$</span></p>
+<p style="color: green;"><span style="color: #000000;">where $p_i$ is the probability that an arbitrary sample belongs to class $C_i$ and is estimated by $\frac{s_i}{s}$. Let attribute A have v distinct values $\{a_1, \ldots, a_v\}$. Attribute <em>A </em>can be used to partition <em>S </em>into <em>v </em>subsets, $\{S_1,\ldots, S_v\}$, where $S_j$ contains those samples in S that have value $a_j$ of $A$. If A were selected as the test attribute, then these subsets would correspond to the branches grown from the subset $S_j$. Now, the encoding information gained by branching at A is:</span></p>
+<p style="color: green;"><span style="color: #000000;">$Gain(A) = I(S) - \sum_{i=1}^{m} \frac{|S_i|}{s} I(S_i) </span></p>
+<p style="color: green;"><span style="color: #000000;">The algorithm computes the information gain of each attribute. The attribute with the highest information gain is chosen as the test attribute for the given set <em>S</em>.</span></p>
+<p style="color: green;"><span style="color: #000000;">The training dataset for the decision tree is algorithm is as below and is represented as a string (trainString). The first line contains tab-seperated attribute name labels. The second line contains tab-separated column-type where <em>c </em>stands for continuous attributes and <em>d </em>stands for discrete attributes. From the third line onwards is tab-seperated data. Similar data format is used for the test-set (testString).<br /></span></p>
+<p style="color: green;">&nbsp;</p>
+
+{{{id=1|
+#auto
+from random import randint;
+import orange, orngTree, orngTest, orngStat;
+trainString = """sepal-length	sepal-width	petal-length	petal-width	iris
+c	c	c	c	d
+				class
+5.1	3.5	1.4	0.2	Iris-setosa
+4.9	3.0	1.4	0.2	Iris-setosa
+4.7	3.2	1.3	0.2	Iris-setosa
+4.6	3.1	1.5	0.2	Iris-setosa
+5.0	3.6	1.4	0.2	Iris-setosa
+5.4	3.9	1.7	0.4	Iris-setosa
+4.6	3.4	1.4	0.3	Iris-setosa
+5.0	3.4	1.5	0.2	Iris-setosa
+4.4	2.9	1.4	0.2	Iris-setosa
+4.9	3.1	1.5	0.1	Iris-setosa
+5.4	3.7	1.5	0.2	Iris-setosa
+4.8	3.4	1.6	0.2	Iris-setosa
+4.8	3.0	1.4	0.1	Iris-setosa
+4.3	3.0	1.1	0.1	Iris-setosa
+5.8	4.0	1.2	0.2	Iris-setosa
+5.7	4.4	1.5	0.4	Iris-setosa
+5.4	3.9	1.3	0.4	Iris-setosa
+5.1	3.5	1.4	0.3	Iris-setosa
+5.7	3.8	1.7	0.3	Iris-setosa
+5.1	3.8	1.5	0.3	Iris-setosa
+5.4	3.4	1.7	0.2	Iris-setosa
+5.1	3.7	1.5	0.4	Iris-setosa
+4.6	3.6	1.0	0.2	Iris-setosa
+5.1	3.3	1.7	0.5	Iris-setosa
+4.8	3.4	1.9	0.2	Iris-setosa
+5.0	3.0	1.6	0.2	Iris-setosa
+5.0	3.4	1.6	0.4	Iris-setosa
+5.2	3.5	1.5	0.2	Iris-setosa
+5.2	3.4	1.4	0.2	Iris-setosa
+4.7	3.2	1.6	0.2	Iris-setosa
+4.8	3.1	1.6	0.2	Iris-setosa
+5.4	3.4	1.5	0.4	Iris-setosa
+5.2	4.1	1.5	0.1	Iris-setosa
+5.5	4.2	1.4	0.2	Iris-setosa
+4.9	3.1	1.5	0.1	Iris-setosa
+5.0	3.2	1.2	0.2	Iris-setosa
+5.5	3.5	1.3	0.2	Iris-setosa
+4.5	2.3	1.3	0.3	Iris-setosa
+4.4	3.2	1.3	0.2	Iris-setosa
+5.0	3.5	1.6	0.6	Iris-setosa
+5.1	3.8	1.9	0.4	Iris-setosa
+4.8	3.0	1.4	0.3	Iris-setosa
+5.1	3.8	1.6	0.2	Iris-setosa
+4.6	3.2	1.4	0.2	Iris-setosa
+5.3	3.7	1.5	0.2	Iris-setosa
+5.0	3.3	1.4	0.2	Iris-setosa
+7.0	3.2	4.7	1.4	Iris-versicolor
+6.4	3.2	4.5	1.5	Iris-versicolor
+6.9	3.1	4.9	1.5	Iris-versicolor
+5.5	2.3	4.0	1.3	Iris-versicolor
+6.5	2.8	4.6	1.5	Iris-versicolor
+5.7	2.8	4.5	1.3	Iris-versicolor
+6.3	3.3	4.7	1.6	Iris-versicolor
+4.9	2.4	3.3	1.0	Iris-versicolor
+6.6	2.9	4.6	1.3	Iris-versicolor
+5.2	2.7	3.9	1.4	Iris-versicolor
+5.0	2.0	3.5	1.0	Iris-versicolor
+5.9	3.0	4.2	1.5	Iris-versicolor
+6.0	2.2	4.0	1.0	Iris-versicolor
+6.1	2.9	4.7	1.4	Iris-versicolor
+5.6	2.9	3.6	1.3	Iris-versicolor
+6.7	3.1	4.4	1.4	Iris-versicolor
+5.6	3.0	4.5	1.5	Iris-versicolor
+5.8	2.7	4.1	1.0	Iris-versicolor
+6.2	2.2	4.5	1.5	Iris-versicolor
+5.6	2.5	3.9	1.1	Iris-versicolor
+5.9	3.2	4.8	1.8	Iris-versicolor
+6.1	2.8	4.0	1.3	Iris-versicolor
+6.3	2.5	4.9	1.5	Iris-versicolor
+6.1	2.8	4.7	1.2	Iris-versicolor
+6.4	2.9	4.3	1.3	Iris-versicolor
+6.6	3.0	4.4	1.4	Iris-versicolor
+6.8	2.8	4.8	1.4	Iris-versicolor
+6.7	3.0	5.0	1.7	Iris-versicolor
+6.0	2.9	4.5	1.5	Iris-versicolor
+5.7	2.6	3.5	1.0	Iris-versicolor
+5.5	2.4	3.8	1.1	Iris-versicolor
+5.5	2.4	3.7	1.0	Iris-versicolor
+5.8	2.7	3.9	1.2	Iris-versicolor
+6.3	2.3	4.4	1.3	Iris-versicolor
+5.6	3.0	4.1	1.3	Iris-versicolor
+5.5	2.5	4.0	1.3	Iris-versicolor
+5.5	2.6	4.4	1.2	Iris-versicolor
+6.1	3.0	4.6	1.4	Iris-versicolor
+5.8	2.6	4.0	1.2	Iris-versicolor
+5.0	2.3	3.3	1.0	Iris-versicolor
+5.6	2.7	4.2	1.3	Iris-versicolor
+5.7	3.0	4.2	1.2	Iris-versicolor
+5.7	2.9	4.2	1.3	Iris-versicolor
+6.2	2.9	4.3	1.3	Iris-versicolor
+5.1	2.5	3.0	1.1	Iris-versicolor
+5.7	2.8	4.1	1.3	Iris-versicolor
+6.3	3.3	6.0	2.5	Iris-virginica
+5.8	2.7	5.1	1.9	Iris-virginica
+7.1	3.0	5.9	2.1	Iris-virginica
+6.3	2.9	5.6	1.8	Iris-virginica
+6.5	3.0	5.8	2.2	Iris-virginica
+7.6	3.0	6.6	2.1	Iris-virginica
+4.9	2.5	4.5	1.7	Iris-virginica
+7.3	2.9	6.3	1.8	Iris-virginica
+6.7	2.5	5.8	1.8	Iris-virginica
+7.2	3.6	6.1	2.5	Iris-virginica
+6.5	3.2	5.1	2.0	Iris-virginica
+6.4	2.7	5.3	1.9	Iris-virginica
+6.8	3.0	5.5	2.1	Iris-virginica
+5.7	2.5	5.0	2.0	Iris-virginica
+5.8	2.8	5.1	2.4	Iris-virginica
+6.4	3.2	5.3	2.3	Iris-virginica
+6.5	3.0	5.5	1.8	Iris-virginica
+7.7	3.8	6.7	2.2	Iris-virginica
+7.7	2.6	6.9	2.3	Iris-virginica
+6.0	2.2	5.0	1.5	Iris-virginica
+6.9	3.2	5.7	2.3	Iris-virginica
+5.6	2.8	4.9	2.0	Iris-virginica
+7.7	2.8	6.7	2.0	Iris-virginica
+6.3	2.7	4.9	1.8	Iris-virginica
+6.7	3.3	5.7	2.1	Iris-virginica
+7.2	3.2	6.0	1.8	Iris-virginica
+6.2	2.8	4.8	1.8	Iris-virginica
+6.1	3.0	4.9	1.8	Iris-virginica
+6.4	2.8	5.6	2.1	Iris-virginica
+7.2	3.0	5.8	1.6	Iris-virginica
+7.4	2.8	6.1	1.9	Iris-virginica
+6.4	3.1	5.5	1.8	Iris-virginica
+6.0	3.0	4.8	1.8	Iris-virginica
+6.9	3.1	5.4	2.1	Iris-virginica
+6.7	3.1	5.6	2.4	Iris-virginica
+6.9	3.1	5.1	2.3	Iris-virginica
+5.8	2.7	5.1	1.9	Iris-virginica
+6.8	3.2	5.9	2.3	Iris-virginica
+6.7	3.3	5.7	2.5	Iris-virginica
+6.7	3.0	5.2	2.3	Iris-virginica
+6.3	2.5	5.0	1.9	Iris-virginica
+6.5	3.0	5.2	2.0	Iris-virginica
+6.2	3.4	5.4	2.3	Iris-virginica
+5.9	3.0	5.1	1.8	Iris-virginica"""
+
+testString = """sepal-length	sepal-width	petal-length	petal-width	iris
+c	c	c	c	d
+				class
+4.9	3.1	1.5	0.1	Iris-setosa
+4.4	3.0	1.3	0.2	Iris-setosa
+5.1	3.4	1.5	0.2	Iris-setosa
+5.0	3.5	1.3	0.3	Iris-setosa
+6.0	2.7	5.1	1.6	Iris-versicolor
+5.4	3.0	4.5	1.5	Iris-versicolor
+6.0	3.4	4.5	1.6	Iris-versicolor
+6.7	3.1	4.7	1.5	Iris-versicolor
+7.9	3.8	6.4	2.0	Iris-virginica
+6.4	2.8	5.6	2.2	Iris-virginica
+6.3	2.8	5.1	1.5	Iris-virginica
+6.1	2.6	5.6	1.4	Iris-virginica
+7.7	3.0	6.1	2.3	Iris-virginica
+6.3	3.4	5.6	2.4	Iris-virginica"""
+///
+}}}
+
+{{{id=4|
+%hideall
+#auto
+def DataGenerator(data):
+    a = "";
+    for i in range(20):
+            if (randint(0,1) == 0):
+                a += str(randint(0,9));
+            else:
+                a += chr(ord('a')+randint(0,25));
+    a += ".tab"
+    f = open(a, "w");
+    f.write(data);
+    f.close();
+    data = orange.ExampleTable(a);
+    return data;
+///
+}}}
+
+<p>In the cell below, the TreeClassifier produces a model given data in the appropriate tab seperated format. The Test-Classifier then given a model and the test instances predicts the required instances. The DecisionTreeAlgorithm, given the train and test data, produces the tree model and predicts the instance label given the tree model.</p>
+
+{{{id=2|
+#auto
+def TreeClassifier(data):
+    l = orngTree.TreeLearner(data);
+    orngTree.printTxt(l, leafFields=['major', 'contingency'])
+    return l;
+    
+def TestClassifier(model, testData):
+    t = orngTest.testOnData([model], testData);
+    print html("<table border = '1' cellspacing = '0' cellpadding = '3px'><tr><td>Instance</td><td>Actual Class</td><td>Class Assigned</td></tr>");
+    l = 0;
+    for i in t.results:
+        maxs = -10^30;
+        classAssigned = -1;
+        for p in range(len(i.probabilities[0])):
+            if(i.probabilities[0][p] > maxs):
+                maxs = i.probabilities[0][p];
+                
+                classAssigned = p;
+        print html("<tr><td align='left'>"+str(testData[l])+"</td><td align='center'>"+str(i.actualClass)+"</td>\t<td align='center'>"+str(classAssigned)+"</td></tr>");
+        l+=1;
+    print html("</table>");
+        
+def DecisionTreeAlgorithm(train, test):
+    train = DataGenerator(train);
+    test = DataGenerator(test);
+    l = TreeClassifier(train);
+    TestClassifier(l, test);
+///
+}}}
+
+{{{id=3|
+DecisionTreeAlgorithm(trainString, testString);
+///
+petal-width<=0.800: Iris-setosa (100.00%)
+petal-width>0.800
+|    petal-width<=1.750
+|    |    sepal-length>7.100: Iris-virginica (100.00%)
+|    |    sepal-length<=7.100
+|    |    |    sepal-length<=4.950
+|    |    |    |    sepal-width<=2.450: Iris-versicolor (100.00%)
+|    |    |    |    sepal-width>2.450: Iris-virginica (100.00%)
+|    |    |    sepal-length>4.950
+|    |    |    |    petal-length<=4.950: Iris-versicolor (100.00%)
+|    |    |    |    petal-length>4.950
+|    |    |    |    |    sepal-length<=6.350: Iris-virginica (100.00%)
+|    |    |    |    |    sepal-length>6.350: Iris-versicolor (100.00%)
+|    petal-width>1.750
+|    |    petal-length>4.850: Iris-virginica (100.00%)
+|    |    petal-length<=4.850
+|    |    |    sepal-width<=3.100: Iris-virginica (100.00%)
+|    |    |    sepal-width>3.100: Iris-versicolor (100.00%)
+
+<html><font color='black'><table border = '1' cellspacing = '0' cellpadding = '3px'><tr><td>Instance</td><td>Actual Class</td><td>Class Assigned</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[4.9, 3.1, 1.5, 0.1, 'Iris-setosa']</td><td align='center'>0</td>	<td align='center'>0</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[4.4, 3.0, 1.3, 0.2, 'Iris-setosa']</td><td align='center'>0</td>	<td align='center'>0</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[5.1, 3.4, 1.5, 0.2, 'Iris-setosa']</td><td align='center'>0</td>	<td align='center'>0</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[5.0, 3.5, 1.3, 0.3, 'Iris-setosa']</td><td align='center'>0</td>	<td align='center'>0</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[6.0, 2.7, 5.1, 1.6, 'Iris-versicolor']</td><td align='center'>1</td>	<td align='center'>2</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[5.4, 3.0, 4.5, 1.5, 'Iris-versicolor']</td><td align='center'>1</td>	<td align='center'>1</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[6.0, 3.4, 4.5, 1.6, 'Iris-versicolor']</td><td align='center'>1</td>	<td align='center'>1</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[6.7, 3.1, 4.7, 1.5, 'Iris-versicolor']</td><td align='center'>1</td>	<td align='center'>1</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[7.9, 3.8, 6.4, 2.0, 'Iris-virginica']</td><td align='center'>2</td>	<td align='center'>2</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[6.4, 2.8, 5.6, 2.2, 'Iris-virginica']</td><td align='center'>2</td>	<td align='center'>2</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[6.3, 2.8, 5.1, 1.5, 'Iris-virginica']</td><td align='center'>2</td>	<td align='center'>2</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[6.1, 2.6, 5.6, 1.4, 'Iris-virginica']</td><td align='center'>2</td>	<td align='center'>2</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[7.7, 3.0, 6.1, 2.3, 'Iris-virginica']</td><td align='center'>2</td>	<td align='center'>2</td></tr></font></html>
+
+<html><font color='black'><tr><td align='left'>[6.3, 3.4, 5.6, 2.4, 'Iris-virginica']</td><td align='center'>2</td>	<td align='center'>2</td></tr></font></html>
+
+<html><font color='black'></table></font></html>
+}}}
+
+<h2 style="color: green;">Assignment</h2>
+<ol>
+<li>Given the following dataset construct and visualize decision tree</li>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody>
+<tr>
+<td>Department</td>
+<td>Status</td>
+<td>Age</td>
+<td>Salary</td>
+</tr>
+<tr>
+<td>d</td>
+<td>d<br /></td>
+<td>d</td>
+<td>d</td>
+</tr>
+<tr>
+<td>sales</td>
+<td>senior</td>
+<td>31-35</td>
+<td>46K-50K</td>
+</tr>
+<tr>
+<td>sales</td>
+<td>junior</td>
+<td>26-30</td>
+<td>26K-30K</td>
+</tr>
+<tr>
+<td>sales</td>
+<td>junior</td>
+<td>31-35</td>
+<td>31K-35K</td>
+</tr>
+<tr>
+<td>systems</td>
+<td>junior</td>
+<td>21-25</td>
+<td>46K-50K</td>
+</tr>
+<tr>
+<td>systems</td>
+<td>senior</td>
+<td>31-35</td>
+<td>66K-70K</td>
+</tr>
+<tr>
+<td>systems</td>
+<td>junior</td>
+<td>26-30</td>
+<td>46K-50K</td>
+</tr>
+<tr>
+<td>systems</td>
+<td>senior</td>
+<td>41-45</td>
+<td>66K-70K</td>
+</tr>
+<tr>
+<td>marketing</td>
+<td>senior</td>
+<td>36-40</td>
+<td>46K-50K</td>
+</tr>
+<tr>
+<td>marketing</td>
+<td>junior</td>
+<td>31-35</td>
+<td>41K-45K</td>
+</tr>
+<tr>
+<td>secretary</td>
+<td>senior</td>
+<td>46-50</td>
+<td>36K-40K</td>
+</tr>
+<tr>
+<td>secretary</td>
+<td>junior</td>
+<td>26-30</td>
+<td>26K-30K</td>
+</tr>
+</tbody>
+</table>
+<li>Let the test sample be: (systems, junior, 26-30). Predict the class-label using the model built above</li>
+</ol>
+<p>Note that, in both the cases, the data needs to be converted to a tab seperated form described above.</p>
+<h2 style="color: green;">References</h2>
+<ul>
+<li>J. R. Quinlan. Induction of decision trees. Machine Learning, 1:81-106, 1986.</li>
+<li>L. Breiman, J. Friedman, R. Olshen, and C. Stone. Classification and Regression Trees. Monterey, CA: Wadsworth Internation Group, 1984.</li>
+<li>J. R. Quinlan. C4.5: Programs for Machine Learning. San Mateo, CA: Morgan Kaufmann, 1993.</li>
+<li>M. Mehta, R. Agarwal, and J. Rissanen. SLIQ: A fast scalable classifier for data mining. In Proc., 1996 Int. Conf. Extending Database Technology (EDBT '96) , Avignon, France, Mar. 1996.</li>
+<li>J. Shafer, R. Agarwal, and M. Mehta. SPRINT: A scalable parallel classifier for data mining. In Proc., 1996 Int. Conf. Very Large Data Bases (VLDB '96), pages 544-555, Bombay, India, Set. 1996.</li>
+</ul>
+
+<br /><br />
+For providing <b>Feedback</b> please click <a href="http://virtual-labs.ac.in/feedback/">here</a>.<br />
+
+<br />
+- Sponsored by MHRD: <a href="http://virtual-labs.ac.in/nmeict/" target="_blank">click</a>
+- Licensing Terms: <a href="http://virtual-labs.ac.in/licensing/" target="_blank">click</a>
+
+{{{id=7|
+
+///
+}}}

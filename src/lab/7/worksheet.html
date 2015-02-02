@@ -1,0 +1,202 @@
+
+
+<center>
+<img src="http://virtual-labs.ac.in/images/virtualLabsLogo.jpg" width="1220" alt="logo"/> 
+</center>
+
+
+<h1 style="color: green;">Agglomerative Clustering</h1>
+<h2 style="color: green;">Introduction</h2>
+<p>&nbsp;</p>
+<p>Cluster analysis or clustering is the assignment of a set of  observations into subsets (called clusters) so that observations in the  same cluster are similar in some sense. Clustering is a method of  unsupervised learning, and a common technique for statistical data  analysis used in many fields, including machine learning, data mining,  pattern recognition, image analysis and bioinformatics.</p>
+<h2 style="color: green;">Objective</h2>
+<p>Through this experiment we explain clustering using the hierarchial clustering algorithm AGNES (AGlomerative NESting) on a dataset. In general, a hierarchial clustering method works by grouping data objects into a tree of clusters. Hierarchial clustering methods can be further classified as either agglomerative or divisive, depending on whether the hierarchial decomposition is formed in a bottom-up or a top-down manner. In this experiment, we study the behaviour of the agglomerative hierachial clustering algorithm AGNES</p>
+<h2 style="color: green;">Theory</h2>
+<h3>Problem Formulation:</h3>
+<p>Given a set of observations $(x_1, x_2, ..., x_n)$, where each  observation is a d-dimensional real vector, the AGNES clustering aims to group data object into a tree of clusters using a bottom-up strategy. The bottom up strategy starts by placing each object in it own cluster and then merges these atomic clusters into larger and larger clusters, until all of the objects are in a single cluster or until certain termination conditions are satisfied. The psuedo code for such a proceedure is as below.</p>
+<h3>Psuedo Code:</h3>
+<p>AgglomerativeClustering (Data D)<br /> {<br />&nbsp;&nbsp;&nbsp; N = $\phi$ #Denogram being constructed.<br />&nbsp;&nbsp;&nbsp; for each point p in D:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Initialize cluster $Ci = \{p\}$;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N = N $\cup$ $C_i$<br />&nbsp;&nbsp;&nbsp; Repeat:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ($C_i$, $C_j$) = closest pair of unmerged clusters in N<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $C_k$ = merge($C_i$, $C_j$)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N = N - $C_i$ - $C_j$<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N = N $\cup$ $C_i$<br />&nbsp;&nbsp;&nbsp;&nbsp; until desired number of clusters remain in N<br />}</p>
+<p>The algorithm first initializes each data object (or point) to be in its own cluster (lines 1-4). Then, in each iteration, it merges the closest pair of clusters (lines 6,7) and updates the set of clusters. Different agglomerative algorithms differ on how they define the similarity between the clusters. The metrics for defining distances between clusters are called as Linkage Metrics and are as below.</p>
+<h3>Linkage Metrics:</h3>
+<p>Single-Link Metric: The distance between two clusters is the distance between their closest points.</p>
+<p>Complete-Link Metric: The distance between two clusters is the distance between their farthest points.</p>
+<p>Average-Link Metric: The distance between the two clusters is the average of pairwise distances between points in two clusters.</p>
+<h2 style="color: green;">Procedure</h2>
+<p><br /> We present the Agnes simulation in the next section. Some points to note are as follows:</p>
+<ol>
+<li>We use the Single-Link Metric to compute the similarities between the two clusters.</li>
+<li> Clicking on 'evaluate' will run the algorithm.</li>
+</ol>
+<h2 style="color: green;">Simulation</h2>
+<p>Consider the following dataset:<br /><br /><br /></p>
+
+{{{id=12|
+#auto
+data = [
+(5.1,3.5,1.4,0.2), #each row here is a record
+(4.9,3.0,1.4,0.2),
+(4.7,3.2,1.3,0.2),
+(4.6,3.1,1.5,0.2),
+(5.0,3.6,1.4,0.2),
+(5.4,3.9,1.7,0.4),
+(4.6,3.4,1.4,0.3),
+(5.0,3.4,1.5,0.2),
+(4.4,2.9,1.4,0.2),
+(4.9,3.1,1.5,0.1),
+(5.4,3.7,1.5,0.2),
+(4.8,3.4,1.6,0.2),
+(4.8,3.0,1.4,0.1),
+(5.1,3.4,1.5,0.2),
+]
+///
+}}}
+
+<p>You may change the data above and click on 'evaluate' if you want to try out the algorithm with a different sample dataset.</p>
+
+{{{id=7|
+#auto
+Level = 4
+///
+}}}
+
+<p>The parameter Level is the number of clusters that are desired. Click on the cell above to change its value. Don't forget to click on evaluate.</p>
+
+{{{id=3|
+#auto
+def Dist(li1, li2):
+    if (len(li1) != len(li2)):
+        print "Dimensions don't match"
+    dist = 0;
+    for i in range(len(li1)):
+        dist += (li1[i]-li2[i])**2;
+    return dist**0.5
+    
+def Distance(li1, li2):#Single-link
+    mins = 10**30;
+    for i in li1:
+        for j in li2:
+            dist = Dist(i, j);
+            if(dist < mins):
+                mins = dist;
+    return mins;
+         
+def FindClosestClusters(Clusters):
+    Cls = len(Clusters);
+    Cl1 = 0;
+    Cl2 = 0;
+    mins = 10**30;
+    for i in range(Cls):
+        for j in range(i+1, Cls):
+            dist = Distance(Clusters[i], Clusters[j]);
+            if dist < mins:
+                Cl1 = i;
+                Cl2 = j;
+                mins = dist;
+    return (Cl1, Cl2);   
+            
+def AgglomerativeClustering(data, Level):
+    Clusters = [];
+    NumberOfPoints = len(data);
+    if(Level <= 0):
+        Level = 1;
+    if (Level > NumberOfPoints):
+        Level = NumberOfPoints
+    for i in range(NumberOfPoints):
+        Clusters.append([data[i]]);
+    while(len(Clusters) != Level):
+        (Cl1, Cl2) = FindClosestClusters(Clusters);
+        NewCluster = Clusters[Cl1][:];
+        NewCluster.extend(Clusters[Cl2][:]);
+        if Cl1 != Cl2:
+            Clusters[Cl1] = NewCluster[:];
+            del Clusters[Cl2];
+    for i in range(len(Clusters)):
+        print "Cluster %s"%(i);
+        for j in Clusters[i]:
+            for k in j:
+              print "   %s"%(N(k, digits = 2)),
+            print
+///
+}}}
+
+Finally, here is the code for the function call for Agglomerative Clustering algorithm above.
+
+{{{id=4|
+#Call the clustering algorithm by pressing evaluate
+AgglomerativeClustering(data, Level);
+///
+Cluster 0
+   5.1    3.5    1.4    0.20
+   5.0    3.6    1.4    0.20
+   5.0    3.4    1.5    0.20
+   5.1    3.4    1.5    0.20
+   4.8    3.4    1.6    0.20
+Cluster 1
+   4.9    3.0    1.4    0.20
+   4.8    3.0    1.4    0.10
+   4.9    3.1    1.5    0.10
+   4.7    3.2    1.3    0.20
+   4.6    3.1    1.5    0.20
+   4.6    3.4    1.4    0.30
+   4.4    2.9    1.4    0.20
+Cluster 2
+   5.4    3.9    1.7    0.40
+Cluster 3
+   5.4    3.7    1.5    0.20
+}}}
+
+<h2 style="color: green;">Assignment</h2>
+<ol>
+<li> Find all clusters for levels = 3.<br /><br /> 
+<table border="1" cellspacing="0px" cellpadding="5px">
+<tbody>
+<tr>
+<th>6.7,3.1,5.6,2.4</th>
+</tr>
+<tr>
+<th>6.9,3.1,5.1,2.3</th>
+</tr>
+<tr>
+<th>5.8,2.7,5.1,1.9</th>
+</tr>
+<tr>
+<th>6.8,3.2,5.9,2.3</th>
+</tr>
+<tr>
+<th>6.7,3.3,5.7,2.5</th>
+</tr>
+<tr>
+<th>6.7,3.0,5.2,2.3</th>
+</tr>
+<tr>
+<th>6.3,2.5,5.0,1.9</th>
+</tr>
+<tr>
+<th>6.5,3.0,5.2,2.0</th>
+</tr>
+<tr>
+<th>6.2,3.4,5.4,2.3</th>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Compute the clusters  for the same dataset for levels = 1, levels = 9. Comment on the clusters obtained in both cases.</li>
+</ol>
+<h2 style="color: green;">References</h2>
+<ul>
+<li> L. Kaufman and P.J. Rousseeuw. Finding Groups in Data: An Introduction to Cluster Analysis. John Wiley &amp; Sons, 1990.</li>
+<li>T. Zhang, R. Ramakrishnan and M. Livny. BIRCH: An efficient data clustering method for very large databases. In Proc. 1996 ACM-SIGMOD Int. Conf. Management of Data (SIGMOD '96), pages 103-114, Montreal, Canada, June 1996.</li>
+<li>S. Guha, R. Rastogi and K. Shim. Cure: An efficient clustering algorithm for large databases. In Proc. 1998 ACM-SIGMOD Int. Conf. Management of Data (SIGMOD '98), pages 73-84, Seattle , WA, June 1998.</li>
+</ul>
+
+<br /><br />
+For providing <b>Feedback</b> please click <a href="http://virtual-labs.ac.in/feedback/">here</a>.<br />
+
+<br />
+- Sponsored by MHRD: <a href="http://virtual-labs.ac.in/nmeict/" target="_blank">click</a>
+- Licensing Terms: <a href="http://virtual-labs.ac.in/licensing/" target="_blank">click</a>
+
+{{{id=13|
+
+///
+}}}

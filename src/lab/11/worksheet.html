@@ -1,0 +1,578 @@
+
+
+<center>
+<img src="http://virtual-labs.ac.in/images/virtualLabsLogo.jpg" width="1220" alt="logo"/> 
+</center>
+
+<h1 style="color: green;">Comparison of Classification Algorithms</h1>
+<h2 style="color: green;">Introduction</h2>
+<p>Classification is a supervised data mining procedure in which individual items are placed into groups based on quantitative information on one or more characteristics inherent in the items (referred to as traits, variables, characters, etc) and based on a training set of previously labeled items. Classification can be thought of as two separate problems - binary classification and multiclass classification. A very familiar example of binary classification is the email spam-catching system: given a set of emails marked as spam and not-spam, it learns the characteristics of spam emails and is then able to process future email messages to mark them as spam or not-spam. It may be noted that the classes in this case are "spam" and "not-spam"</p>
+<h2 style="color: green;">Objective</h2>
+<p>Through this experiment we will demonstrate the behaviour of kNN on varying K and compare the behavior of kNN with Decision Trees on the basis of accuracy and computational complexity during training and testing.</p>
+<h2 style="color: green;">Theory</h2>
+<p>It is known that, the behaviour of various classification algorithms differs based on accuracy, computational complexity during training and testing and accuracy on a test dataset. Infact for some algorithms there may be a&nbsp; significant variation in performance when some parameters are varied. In this experiment we study the behavior of <em>kNN </em>by varying the number of neighbours <em>k.</em> In addition to this, we compare the performance of <em>kNN</em> and <em>decision trees</em> on the basis of various factors.</p>
+<p><span id="cell_outer_0"> </span></p>
+<p style="color: green;"><span style="color: #000000;">The  training dataset for the decision tree is algorithm is as below and is  represented as a string (trainString). The first line contains  tab-seperated attribute name labels. The second line contains  tab-separated column-type where <em>c </em>stands for continuous attributes and <em>d </em>stands  for discrete attributes. From the third line onwards is tab-seperated  data. Similar data format is used for the test-set (testString).<br /></span></p>
+<p>&nbsp;</p>
+
+{{{id=1|
+#auto
+trainString = """sepal-length	sepal-width	petal-length	petal-width	iris
+c	c	c	c	d
+				class
+5.1	3.5	1.4	0.2	Iris-setosa
+4.9	3.0	1.4	0.2	Iris-setosa
+4.7	3.2	1.3	0.2	Iris-setosa
+4.6	3.1	1.5	0.2	Iris-setosa
+5.0	3.6	1.4	0.2	Iris-setosa
+5.4	3.9	1.7	0.4	Iris-setosa
+4.6	3.4	1.4	0.3	Iris-setosa
+5.0	3.4	1.5	0.2	Iris-setosa
+4.4	2.9	1.4	0.2	Iris-setosa
+4.9	3.1	1.5	0.1	Iris-setosa
+5.4	3.7	1.5	0.2	Iris-setosa
+4.6	3.6	1.0	0.2	Iris-setosa
+5.1	3.3	1.7	0.5	Iris-setosa
+4.8	3.4	1.9	0.2	Iris-setosa
+5.0	3.0	1.6	0.2	Iris-setosa
+5.0	3.4	1.6	0.4	Iris-setosa
+5.2	3.5	1.5	0.2	Iris-setosa
+5.2	3.4	1.4	0.2	Iris-setosa
+4.7	3.2	1.6	0.2	Iris-setosa
+4.8	3.1	1.6	0.2	Iris-setosa
+5.4	3.4	1.5	0.4	Iris-setosa
+5.2	4.1	1.5	0.1	Iris-setosa
+5.5	4.2	1.4	0.2	Iris-setosa
+4.9	3.1	1.5	0.1	Iris-setosa
+5.0	3.2	1.2	0.2	Iris-setosa
+5.5	3.5	1.3	0.2	Iris-setosa
+4.5	2.3	1.3	0.3	Iris-setosa
+4.4	3.2	1.3	0.2	Iris-setosa
+5.0	3.5	1.6	0.6	Iris-setosa
+5.1	3.8	1.9	0.4	Iris-setosa
+4.8	3.0	1.4	0.3	Iris-setosa
+5.1	3.8	1.6	0.2	Iris-setosa
+4.6	3.2	1.4	0.2	Iris-setosa
+5.3	3.7	1.5	0.2	Iris-setosa
+5.0	3.3	1.4	0.2	Iris-setosa
+5.0	3.5	1.3	0.3	Iris-setosa
+4.8	3.4	1.6	0.2	Iris-setosa
+4.8	3.0	1.4	0.1	Iris-setosa
+4.3	3.0	1.1	0.1	Iris-setosa
+5.8	4.0	1.2	0.2	Iris-setosa
+5.7	4.4	1.5	0.4	Iris-setosa
+5.4	3.9	1.3	0.4	Iris-setosa
+5.1	3.5	1.4	0.3	Iris-setosa
+5.7	3.8	1.7	0.3	Iris-setosa
+5.1	3.8	1.5	0.3	Iris-setosa
+5.4	3.4	1.7	0.2	Iris-setosa
+5.1	3.7	1.5	0.4	Iris-setosa
+7.0	3.2	4.7	1.4	Iris-versicolor
+6.4	3.2	4.5	1.5	Iris-versicolor
+6.9	3.1	4.9	1.5	Iris-versicolor
+5.5	2.3	4.0	1.3	Iris-versicolor
+6.5	2.8	4.6	1.5	Iris-versicolor
+5.7	2.8	4.5	1.3	Iris-versicolor
+6.3	3.3	4.7	1.6	Iris-versicolor
+4.9	2.4	3.3	1.0	Iris-versicolor
+6.6	2.9	4.6	1.3	Iris-versicolor
+5.2	2.7	3.9	1.4	Iris-versicolor
+5.0	2.0	3.5	1.0	Iris-versicolor
+5.9	3.0	4.2	1.5	Iris-versicolor
+6.0	2.2	4.0	1.0	Iris-versicolor
+6.1	2.9	4.7	1.4	Iris-versicolor
+5.6	2.9	3.6	1.3	Iris-versicolor
+6.7	3.1	4.4	1.4	Iris-versicolor
+5.6	3.0	4.5	1.5	Iris-versicolor
+5.8	2.7	4.1	1.0	Iris-versicolor
+6.2	2.2	4.5	1.5	Iris-versicolor
+5.6	2.5	3.9	1.1	Iris-versicolor
+5.9	3.2	4.8	1.8	Iris-versicolor
+6.1	2.8	4.0	1.3	Iris-versicolor
+6.3	2.5	4.9	1.5	Iris-versicolor
+6.1	2.8	4.7	1.2	Iris-versicolor
+6.4	2.9	4.3	1.3	Iris-versicolor
+6.6	3.0	4.4	1.4	Iris-versicolor
+6.8	2.8	4.8	1.4	Iris-versicolor
+6.7	3.0	5.0	1.7	Iris-versicolor
+5.6	3.0	4.1	1.3	Iris-versicolor
+5.5	2.5	4.0	1.3	Iris-versicolor
+5.5	2.6	4.4	1.2	Iris-versicolor
+6.1	3.0	4.6	1.4	Iris-versicolor
+5.8	2.6	4.0	1.2	Iris-versicolor
+5.0	2.3	3.3	1.0	Iris-versicolor
+5.6	2.7	4.2	1.3	Iris-versicolor
+5.7	3.0	4.2	1.2	Iris-versicolor
+5.7	2.9	4.2	1.3	Iris-versicolor
+6.2	2.9	4.3	1.3	Iris-versicolor
+5.1	2.5	3.0	1.1	Iris-versicolor
+5.7	2.8	4.1	1.3	Iris-versicolor
+6.3	3.3	6.0	2.5	Iris-virginica
+5.8	2.7	5.1	1.9	Iris-virginica
+7.1	3.0	5.9	2.1	Iris-virginica
+6.3	2.9	5.6	1.8	Iris-virginica
+6.5	3.0	5.8	2.2	Iris-virginica
+7.6	3.0	6.6	2.1	Iris-virginica
+4.9	2.5	4.5	1.7	Iris-virginica
+7.3	2.9	6.3	1.8	Iris-virginica
+6.7	2.5	5.8	1.8	Iris-virginica
+7.2	3.6	6.1	2.5	Iris-virginica
+6.5	3.2	5.1	2.0	Iris-virginica
+6.4	2.7	5.3	1.9	Iris-virginica
+6.8	3.0	5.5	2.1	Iris-virginica
+5.7	2.5	5.0	2.0	Iris-virginica
+5.8	2.8	5.1	2.4	Iris-virginica
+6.4	3.2	5.3	2.3	Iris-virginica
+6.5	3.0	5.5	1.8	Iris-virginica
+6.4	2.8	5.6	2.2	Iris-virginica
+6.3	2.8	5.1	1.5	Iris-virginica
+6.1	2.6	5.6	1.4	Iris-virginica
+7.7	3.0	6.1	2.3	Iris-virginica
+6.3	3.4	5.6	2.4	Iris-virginica
+7.4	2.8	6.1	1.9	Iris-virginica
+7.7	3.8	6.7	2.2	Iris-virginica
+7.7	2.6	6.9	2.3	Iris-virginica
+6.0	2.2	5.0	1.5	Iris-virginica
+6.9	3.2	5.7	2.3	Iris-virginica
+5.6	2.8	4.9	2.0	Iris-virginica
+7.7	2.8	6.7	2.0	Iris-virginica
+6.3	2.7	4.9	1.8	Iris-virginica
+6.7	3.3	5.7	2.1	Iris-virginica
+7.2	3.2	6.0	1.8	Iris-virginica
+6.2	2.8	4.8	1.8	Iris-virginica
+6.1	3.0	4.9	1.8	Iris-virginica
+6.4	2.8	5.6	2.1	Iris-virginica
+7.2	3.0	5.8	1.6	Iris-virginica
+
+6.7	3.3	5.7	2.5	Iris-virginica
+6.7	3.0	5.2	2.3	Iris-virginica
+6.3	2.5	5.0	1.9	Iris-virginica
+6.5	3.0	5.2	2.0	Iris-virginica
+6.2	3.4	5.4	2.3	Iris-virginica
+5.9	3.0	5.1	1.8	Iris-virginica"""
+
+testString = """sepal-length	sepal-width	petal-length	petal-width	iris
+c	c	c	c	d
+				class
+4.9	3.1	1.5	0.1	Iris-setosa
+4.4	3.0	1.3	0.2	Iris-setosa
+5.1	3.4	1.5	0.2	Iris-setosa
+6.0	2.7	5.1	1.6	Iris-versicolor
+5.4	3.0	4.5	1.5	Iris-versicolor
+6.0	3.4	4.5	1.6	Iris-versicolor
+6.7	3.1	4.7	1.5	Iris-versicolor
+7.9	3.8	6.4	2.0	Iris-virginica
+6.4	3.1	5.5	1.8	Iris-virginica
+6.0	3.0	4.8	1.8	Iris-virginica
+6.9	3.1	5.4	2.1	Iris-virginica
+6.7	3.1	5.6	2.4	Iris-virginica
+6.9	3.1	5.1	2.3	Iris-virginica
+5.8	2.7	5.1	1.9	Iris-virginica
+6.8	3.2	5.9	2.3	Iris-virginica
+6.0	2.9	4.5	1.5	Iris-versicolor
+5.7	2.6	3.5	1.0	Iris-versicolor
+5.5	2.4	3.8	1.1	Iris-versicolor
+5.5	2.4	3.7	1.0	Iris-versicolor
+5.8	2.7	3.9	1.2	Iris-versicolor
+6.3	2.3	4.4	1.3	Iris-versicolor"""
+///
+}}}
+
+{{{id=2|
+%hideall
+#auto
+from random import randint;
+import orange, orngTree, orngTest, orngStat;
+import datetime
+def DataGenerator(data):
+    a = "";
+    for i in range(20):
+            if (randint(0,1) == 0):
+                a += str(randint(0,9));
+            else:
+                a += chr(ord('a')+randint(0,25));
+    a += ".tab"
+    f = open(a, "w");
+    f.write(data);
+    f.close();
+    data = orange.ExampleTable(a);
+    return data;
+///
+Traceback (most recent call last):                if (randint(0,1) == 0):
+  File "", line 1, in <module>
+    
+  File "/tmp/tmpxBLC3U/___code___.py", line 4, in <module>
+    import orange, orngTree, orngTest, orngStat;
+ImportError: No module named orange
+}}}
+
+{{{id=28|
+
+///
+}}}
+
+<p style="color: green;"><span style="color: #000000;">The function <em>Output </em>is a helper function which given a list of (x,y) tuples returns a line-plot of these values. The helper function has been used for all plots. The other arguments are the Legend, the color of the line graph, the label of the X and Y axis respectively. To display the graph, <em>.show()</em> function must be called on the return value.<br /></span></p>
+
+{{{id=11|
+#auto
+def Output(Accuracy, _legend_label_, _color_, _X_Axis_, _Y_Axis_):
+    if(len(Accuracy) == 0):
+        return;
+    elif(len(Accuracy) == 1):
+        p = point(Accuracy[0], legend_label = _legend_label_, color=_color_);
+    else:
+        p = line([Accuracy[0], Accuracy[1]], legend_label = _legend_label_, color=_color_);
+        for i in range(2, len(Accuracy)):
+            p += line([Accuracy[i-1], Accuracy[i]], color=_color_);
+    poi = plot(p, axes = true, axes_labels = [_X_Axis_, _Y_Axis_]);
+    return poi;
+///
+}}}
+
+{{{id=15|
+%hideall
+#auto
+def ForceToRange(smallest_K, highest_K, train):
+    if(smallest_K > highest_K):
+        swap(smallest_K, highest_K);
+    if smallest_K <= 0:
+        smallest_K = 1;
+    if highest_K <= 0:
+        highest_K = 1;
+    if smallest_K > len(train):
+        smallest_K = len(train);
+    if highest_K > len(train):
+        highest_K = len(train);
+    return smallest_K, highest_K;
+///
+}}}
+
+<p>The experiment below, compares the accuracy of the <em>kNN</em> algorithm with varying values of k. The arguments to the function <em>AccuracyWithVaryingK</em> are train set, test set, smallest value of k and the largest value of k respectively. The function computes accuracies for all intermediate values of <em>k</em> from the smallest to largest and visualizes it in the form of a line graph. The function NNClassifier builds a class model given the number of neighbours K.</p>
+<p>&nbsp;</p>
+
+{{{id=4|
+#auto
+def NNClassifier(data, args):
+    if (args.has_key('k')):
+      K = args['k'];
+    elif (args.has_key('K')):
+      K = args['K'];
+    else:
+        print 'k not set. Using default k = 1'
+        K = 1;
+    l = orange.kNNLearner(data, k=K);
+    return l;
+
+    
+def AccuracyWithVaryingK(train, test, smallest_K, highest_K):
+    train = DataGenerator(train);
+    test = DataGenerator(test);
+    Accuracy = []
+    args = {}
+    smallest_K, highest_K = ForceToRange(smallest_K, highest_K, train);
+    for i in range(smallest_K, highest_K+1):
+        args['k'] = i;
+        model = NNClassifier(train, args);
+        t = orngTest.testOnData([model], test);
+        CA = orngStat.CA(t)
+        Accuracy.append((i, CA[0]));        
+    return Output(Accuracy, "Accuracy with varying K", "red", "K(Number of Neighbours)", "Classification Accuracy of kNN").show();
+///
+}}}
+
+<p style="color: green;"><span style="color: #000000;">The cell below makes a call to the AccuracyWithVaryingK algorithm, with arguments being the training string, test string, <em>smallest value of k </em>and the <em>largest value of k</em>. Click on the cell below to change the required values. Don't forget to click 'evaluate'.<br /></span></p>
+<p>&nbsp;</p>
+
+{{{id=5|
+smallest_K = 1;
+highest_K = 100;
+AccuracyWithVaryingK(trainString, testString, smallest_K, highest_K);
+///
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+<p>The experiment below, compares the training time of the <em>kNN</em> algorithm with varying values of k. The arguments to the function&nbsp;<em>TrainingTimesOnVaryingK</em> are  train set, test set, smallest value of k and the largest value of k  respectively. The function computes training times for all intermediate  values of <em>k</em> from the smallest to largest and visualizes it in the form of a line graph. As the learner only copies the required data in <em>kNN </em>algorithm, the train times are very small.</p>
+
+{{{id=13|
+#auto
+def TrainingTimesOnVaryingK(train, test, smallest_K, highest_K):
+    train = DataGenerator(train);
+    test = DataGenerator(test);
+    Times = []
+    args = {}
+    smallest_K, highest_K = ForceToRange(smallest_K, highest_K, train);
+    for i in range(smallest_K, highest_K+1):
+        args['k'] = i;
+        now = datetime.datetime.now();
+        for iters in range(5):
+                model = NNClassifier(train, args);
+        end = datetime.datetime.now();
+        t = end-now;
+        t = t.seconds*10**6+t.microseconds;
+        t/=5.0;
+        t/=10**3
+        Times.append((i, t));
+    return Output(Times, "Training times with varying K (KNN)", "red", "K(Number of Neighbours)", "Time (in mS) for training kNN").show();
+///
+}}}
+
+<p style="color: green;"><span style="color: #000000;">The cell below makes a call to the </span><span style="color: #000000;">TrainingTimesOnVaryingK</span><span style="color: #000000;"> algorithm, with arguments being the training string, test string, <em>smallest value of k </em>and the <em>largest value of k</em>. Click on the cell below to change the required values. Don't forget to click 'evaluate'.<br /></span></p>
+<p>&nbsp;</p>
+
+{{{id=14|
+smallest_K = 1;
+highest_K = 100;
+TrainingTimesOnVaryingK(trainString, testString, smallest_K, highest_K);
+///
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+<p>The experiment below, compares the time required for classifying all test tuples using the <em>kNN</em> algorithm for varying values of k. The arguments to the function&nbsp;<em>TimesOnTestingVaryingK</em> are  train set, test set, smallest value of k and the largest value of k   respectively. The function computes testing times for all  intermediate  values of <em>k</em> from the smallest to largest and visualizes it in the form of a line graph.</p>
+
+{{{id=16|
+#auto
+def TimesOnTestingVaryingK(train, test, smallest_K, highest_K):
+    train = DataGenerator(train);
+    test = DataGenerator(test);
+    Times = []
+    args = {}
+    smallest_K, highest_K = ForceToRange(smallest_K, highest_K, train);
+    for i in range(smallest_K, highest_K+1):
+        args['k'] = i;
+        model = NNClassifier(train, args);
+        now = datetime.datetime.now();
+        for iters in range(5):
+                t = orngTest.testOnData([model], test);
+        end = datetime.datetime.now();
+        t = end-now;
+        t = t.seconds*10**6+t.microseconds;
+        t/=5.0;
+        t/=10**3
+        Times.append((i, t));
+    return Output(Times, "Time in test phase for varying K (KNN)", "red", "K(Number of Neighbours)", "Time (in mS) in test phase kNN").show();
+///
+}}}
+
+<p><span id="cell_outer_9"><span style="color: #000000;">The cell below makes a call to the&nbsp;</span></span>TimesOnTestingVaryingK<span id="cell_outer_9"><span style="color: #000000;"> algorithm, with arguments being the training string, test string, <em>smallest value of k </em>and the <em>largest value of k</em>. Click on the cell below to change the required values. Don't forget to click 'evaluate'.</span></span></p>
+
+{{{id=17|
+smallest_K = 1;
+highest_K = 100;
+TimesOnTestingVaryingK(trainString, testString, smallest_K, highest_K);
+///
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+<p style="color: green;"><span style="color: #000000;">The function&nbsp;</span><span style="color: #000000;"><em>TreeComparer</em></span><span style="color: #000000;"> on being passed the train set, the test set and the optional function  parameters returns the train-time, test-time, classification accuracy  and model size for the decision tree algorithm.&nbsp; <br /></span></p>
+
+{{{id=18|
+#auto
+def TreeLearn(data):
+    now = datetime.datetime.now();
+    for i in range(2):
+        l = orngTree.TreeLearner(data);
+    end = datetime.datetime.now();
+    t = end-now;
+    t = t.seconds*10**6+t.microseconds;
+    t/=2.0;
+    t/=10**3
+    return l, t;
+   
+def TreeTest(model, test):
+   now = datetime.datetime.now();
+   for iters in range(2):
+      t = orngTest.testOnData([model], test);
+   end = datetime.datetime.now();
+   tim = end-now;
+   tim = tim.seconds*10**6+tim.microseconds;
+   tim /= 2.0;
+   tim /= 10**3
+   return orngStat.CA(t)[0], tim;
+
+def TreeComparer(train, test, args):
+   model, traintime = TreeLearn(train);
+   classification_accuracy, testtime = TreeTest(model, test);
+   return "Decision Tree", traintime, testtime, classification_accuracy, sys.getsizeof(model);
+///
+}}}
+
+<p style="color: green;"><span style="color: #000000;">The function <em>NNComparer</em> on being passed the train set, the test set and the optional function parameters returns the train-time, test-time, classification accuracy and model size for the <em>kNN</em> algorithm.&nbsp; <br /></span></p>
+
+{{{id=22|
+#auto
+def NNLearn(data, K):
+    now = datetime.datetime.now();
+    for i in range(2):
+        l = orange.kNNLearner(data, k = K);
+    end = datetime.datetime.now();
+    t = end-now;
+    t = t.seconds*10**6+t.microseconds;
+    t/=2.0;
+    t/=10**3
+    return l, t;
+   
+def NNTest(model, test):
+   now = datetime.datetime.now();
+   for iters in range(2):
+      t = orngTest.testOnData([model], test);
+   end = datetime.datetime.now();
+   tim = end-now;
+   tim = tim.seconds*10**6+tim.microseconds;
+   tim /= 2.0;
+   tim /= 10**3
+   return orngStat.CA(t)[0], tim;
+
+
+def NNComparer(train, test, args):   
+    if (args.has_key('k')):
+      K = args['k'];
+    elif (args.has_key('K')):
+      K = args['K'];
+    else:
+        print 'k not set. Using default k = 1'
+        K = 1;
+    model, traintime = NNLearn(train, K);
+    classification_accuracy, testtime = NNTest(model, test);
+    return "Nearest Neighbour with K = %s"%(str(K)), traintime, testtime, classification_accuracy, sys.getsizeof(model);
+///
+}}}
+
+<p>The function <em>Comparer</em> accepts a list of list of individual <em>classifiers</em>, train-set, test set and an indefinite number of optional parameters that may be needed by the classification algorithms. The output of the function is a table that compares the individual classifiers based on their train-times, test-times and classification accuracies.</p>
+
+{{{id=19|
+#auto
+def Comparer(classifiers, train, test, **args):
+   train = DataGenerator(train);
+   test = DataGenerator(test);
+   print html("\n\n<table border='1' cellspacing=0px cellpadding=4px><tr><td>Learner</td><td>Train Time(mS)</td><td>Test Time(mS)</td><td>Accuracy</td></tr>");
+   for cs in classifiers:
+       Learner_name, traintime, testtime, classification_accuracy, model_size = cs(train, test, args)
+       print html("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"%(Learner_name, N(traintime, digits=5), N(testtime, digits=5), N(float(classification_accuracy), digits=5)));
+   print html('</table>');
+///
+}}}
+
+<p><span style="color: #000000;">In the cell below, a call is made to the <em>Comparer</em> with the first argument being a list of individual <em>classifiers. </em>The individual classifiers are the <em>Decision Tree </em>and the <em>kNN </em>algorithm. the optional parameter <em>k</em> is passed as is required by the <em>kNN </em>algorithm.</span></p>
+
+{{{id=20|
+Comparer([TreeComparer, NNComparer], trainString, testString, k = 120 );
+///
+<html><font color='black'>
+
+<table border='1' cellspacing=0px cellpadding=4px><tr><td>Learner</td><td>Train Time(mS)</td><td>Test Time(mS)</td><td>Accuracy</td></tr></font></html>
+
+<html><font color='black'><tr><td>Decision Tree</td><td>2.7085</td><td>0.98650</td><td>0.95238</td></tr></font></html>
+
+<html><font color='black'><tr><td>Nearest Neighbour with K = 120</td><td>0.17850</td><td>4.1475</td><td>1.0000</td></tr></font></html>
+
+<html><font color='black'></table></font></html>
+}}}
+
+<h2 style="color: green;">Assignment</h2>
+<ol>
+<li>Write a modified kNN, that can handle categorical attributes.&nbsp; (<strong>Hint:</strong> Normalize continuous attributes from 0-1. Also, assign the distance between two different categorical values to be 1 and the distance between two like categorical values to be 0).</li>
+<li>Apply the kNN algorithm developed above to the following dataset. Let the test sample be: (systems, junior, 26-30). Predict the class-label using the kNN algorithm for varying values of k</li>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody>
+<tr>
+<td>Department</td>
+<td>Status</td>
+<td>Age</td>
+<td>Salary</td>
+</tr>
+<tr>
+<td>d</td>
+<td>d<br /></td>
+<td>d</td>
+<td>d</td>
+</tr>
+<tr>
+<td>sales</td>
+<td>senior</td>
+<td>31-35</td>
+<td>46K-50K</td>
+</tr>
+<tr>
+<td>sales</td>
+<td>junior</td>
+<td>26-30</td>
+<td>26K-30K</td>
+</tr>
+<tr>
+<td>sales</td>
+<td>junior</td>
+<td>31-35</td>
+<td>31K-35K</td>
+</tr>
+<tr>
+<td>systems</td>
+<td>junior</td>
+<td>21-25</td>
+<td>46K-50K</td>
+</tr>
+<tr>
+<td>systems</td>
+<td>senior</td>
+<td>31-35</td>
+<td>66K-70K</td>
+</tr>
+<tr>
+<td>systems</td>
+<td>junior</td>
+<td>26-30</td>
+<td>46K-50K</td>
+</tr>
+<tr>
+<td>systems</td>
+<td>senior</td>
+<td>41-45</td>
+<td>66K-70K</td>
+</tr>
+<tr>
+<td>marketing</td>
+<td>senior</td>
+<td>36-40</td>
+<td>46K-50K</td>
+</tr>
+<tr>
+<td>marketing</td>
+<td>junior</td>
+<td>31-35</td>
+<td>41K-45K</td>
+</tr>
+<tr>
+<td>secretary</td>
+<td>senior</td>
+<td>46-50</td>
+<td>36K-40K</td>
+</tr>
+<tr>
+<td>secretary</td>
+<td>junior</td>
+<td>26-30</td>
+<td>26K-30K</td>
+</tr>
+</tbody>
+</table>
+</ol>
+<h2 style="color: green;">References</h2>
+<ul>
+<li><span id="cell_outer_6">&nbsp;</span>J. R. Quinlan. Induction of decision trees. Machine Learning, 1:81-106, 1986. </li>
+<li>L. Breiman, J. Friedman, R. Olshen, and C. Stone. Classification and   Regression Trees. Monterey, CA: Wadsworth Internation Group, 1984.</li>
+<li>J. R. Quinlan. C4.5: Programs for Machine Learning. San Mateo, CA: Morgan Kaufmann, 1993.</li>
+<li>B. V. Dasarathy. Nearest neighbour (NN) Norms: NN pattern classification techniques. IEEE computer society press, 1991.</li>
+<li>R. O. Duda, P. E. Hart and D. G. Stork. Pattern Classification (2<sup>nd</sup> ed.). John Wiley and Sons, 2001.</li>
+</ul>
+<p>&nbsp;</p>
+
+<br /><br />
+For providing <b>Feedback</b> please click <a href="http://virtual-labs.ac.in/feedback/">here</a>.<br />
+
+<br />
+- Sponsored by MHRD: <a href="http://virtual-labs.ac.in/nmeict/" target="_blank">click</a>
+- Licensing Terms: <a href="http://virtual-labs.ac.in/licensing/" target="_blank">click</a>
+
+{{{id=27|
+
+///
+}}}

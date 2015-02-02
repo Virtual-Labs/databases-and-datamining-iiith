@@ -1,0 +1,492 @@
+
+
+<center>
+<img src="http://virtual-labs.ac.in/images/virtualLabsLogo.jpg" width="1220" alt="logo"/> 
+</center>
+
+<h1 style="color: green;">Algorithm Comparison of Association Rule Mining Methods</h1>
+<h2 style="color: green;">Introduction</h2>
+<p><span id="cell_outer_0">In data mining, association rule learning is a  popular and well researched method for discovering interesting relations  between variables in large databases. For example, the rule <strong>{onions, potatoes} <span><span><span>&minus;</span><span>&rarr;</span></span></span> {burger}</strong> found in the sales data of a supermarket would indicate that if a  customer buys onions and potatoes together, he or she is likely to also  buy burger. Such information can be used as the basis for decisions  about marketing activities such as, e.g., promotional pricing or product  placements. In addition to the above example from market basket  analysis association rules are employed today in many application areas  including web usage mining, intrusion detection and bioinformatics. </span></p>
+<h2 style="color: green;">Objective</h2>
+<p>Through this experiment we will demonstrate the behaviour of various association rule mining algorithms on varying supports.</p>
+<h2 style="color: green;">Theory</h2>
+<p>It is known that, all "valid" association rule mining algorithms generate the same sets of frequent items and thus the factor that differentiate them is the computational efficiency on varying levels of support. In this experiment, we compare three frequent itemset generation algorithms namely <em>Apriori</em>, <em>Sampling </em>and <em>Partition</em> based on their computational efficiencies on varying levels of support.</p>
+<h2 style="color: green;">Procedure</h2>
+<p><br /> We compare the various algorithmsf below. Some points to note are as follows:</p>
+<ol>
+<li> Clicking on 'evaluate' will run the algorithm.</li>
+</ol>
+<h2 style="color: green;">Simulation</h2>
+<p>Consider the following dataset:</p>
+
+{{{id=1|
+#auto
+data = [
+('M','O','N','K','E','Y'), #each row here is a record, or a market basket with several items
+('D','O','N','K','E','Y'),
+('M','A','K','E'),
+('M','U','C','K','Y'),
+('C','O','O','K','I','E')
+]
+///
+}}}
+
+{{{id=13|
+#auto
+%hideall
+def AprioriGen(F):
+    C  = {}
+    for x in F:
+        for y in F:
+            if len(x) == len(y): #in general case this may be required
+                z = set(x)|set(y)
+                if len(z) == len(x)+1: #true if x and y share all items except 1
+                    prune = False
+                    z = list(z)
+                    z.sort()
+                    for i in range(len(z)): #remove each item from z
+                        item = z.pop(i)
+                        if tuple(z) not in F: #is subset of z in F ?
+                            prune = True
+                            break
+                        z.insert(i,item)
+                    if not prune:
+                        C[tuple(z)] = 0
+    return C
+///
+}}}
+
+{{{id=6|
+#auto
+%hideall
+def apriori(data, minsup, args):
+    mincount = int(math.ceil(len(data) * minsup));
+    C = {}
+    F = {}
+
+    #--- first scan
+    for r in data:
+        r = list(r)
+        r.sort()
+        r = tuple(r)
+        for i in r:
+            if (i,) in C: C[(i,)] += 1
+            else: C[(i,)] = 1
+
+    Fk = dict((s,count) for s,count in C.iteritems() if count >= mincount)
+    F.update(Fk)
+
+    C = AprioriGen(Fk)
+
+    #--- more scans
+    k = 2
+    while len(C) > 0:
+        for r in data:
+            sr = set(r)
+            for s in C:
+                if set(s) <= sr:
+                    C[s] += 1
+
+        Fk = dict((s,count) for s,count in C.iteritems() if count >= mincount)
+        F.update(Fk)
+        C = AprioriGen(Fk)
+        k += 1
+    return F
+///
+}}}
+
+{{{id=20|
+#auto
+%hideall
+def sampling(data, minsup, args):
+    if(args.has_key('sample_size')):
+          sample_size = args['sample_size'];
+    else:
+          print 'Sample size not provided as argument to sampling. Using sample_size = 3'
+          sample_size = 3;
+    
+    sample = data[0:sample_size]
+    
+    #--- mine sample
+    FS = apriori(sample, minsup, args)
+    NS = AprioriGen(FS)
+
+    #--- reset counters
+    for i in FS: FS[i] = 0
+
+    #--- first scan: count FS and NS
+    for r in data:
+        sr = set(r)
+        #-- count FS
+        for s in FS:
+            if set(s) <= sr:
+                FS[s] += 1
+        #-- count NS
+        for s in NS:
+            if set(s) <= sr:
+                NS[s] += 1
+        #-- handle singletons that are not in sample
+        for i in r:
+            if (i,) not in NS and (i,) not in FS:
+                NS[(i,)] = 1
+    
+    #--- gather global frequent and infrequent itemsets
+    mincount = int(math.ceil(len(data) * minsup))
+    F = dict((s,count) for s,count in FS.iteritems() if count >= mincount)
+    promoted_borders = dict((s,count) for s,count in NS.iteritems() if count >= mincount)
+    F.update(promoted_borders)
+    infrequent = dict((s,count) for s,count in FS.iteritems() if count < mincount)
+    infrequent.update(dict((s,count) for s,count in NS.iteritems() if count < mincount))
+    
+    #--- generate supersets of promoted borders
+    supersets  = {}
+    expand_set = promoted_borders
+    while expand_set:
+        immediate_supersets = {}
+        for x in expand_set:
+            for y in F:
+                if len(x) == len(y): #in general case this may be required
+                    z = set(x)|set(y)
+                    if len(z) == len(x)+1: #true if x and y share all items except 1
+                        prune = False
+                        z = list(z)
+                        z.sort()
+                        for i in range(len(z)): #remove each item from z
+                            item = z.pop(i)
+                            if tuple(z) in infrequent:
+                                prune = True
+                                break
+                            z.insert(i,item)
+                        if not prune:
+                            immediate_supersets[tuple(z)] = 0
+        supersets.update(immediate_supersets)
+        expand_set = immediate_supersets
+
+    #--- second scan: get counts of supersets
+    for r in data:
+        sr = set(r)
+        for s in supersets:
+            if set(s) <= sr:
+                supersets[s] += 1
+
+    F_last = dict((s,count) for s,count in supersets.iteritems() if count >= mincount)
+    F.update(F_last)
+    return F
+
+def partitioning(data, minsup, args):
+    if(args.has_key('partition_size')):
+          partition_size = args['partition_size'];
+    else:
+          print 'Partition size not provided as argument to sampling. Using partition_size = 3'
+          partition_size = 3;
+
+    C = {} #global candidates
+    
+    #--- first scan: mine each partition
+    for start in range(0,len(data),partition_size):
+        part = data[start : start+partition_size]
+        F_local = apriori(part, minsup, args)
+        C.update(F_local)
+    
+    #--- reset counters
+    for i in C: C[i] = 0
+    
+    #--- second scan: get global counts
+    for r in data:
+        sr = set(r)
+        for s in C:
+            if set(s) <= sr:
+                C[s] += 1
+
+    mincount = int(math.ceil(len(data) * minsup))
+    F = dict((s,count) for s,count in C.iteritems() if count >= mincount)
+    return F
+///
+}}}
+
+{{{id=14|
+#auto
+%hideall
+def FrequentItemsets(data, lowest_minsup, highest_minsup, minsup_increment, method, **args):
+    minsup = lowest_minsup;
+    Plot_points = []
+   
+    if lowest_minsup > highest_minsup:
+        swap(lowest_minsup, highest_minsup);
+    if(highest_minsup > 1): #Checks if minsup in range (0-1)
+        highest_minsup = 1;
+    if(lowest_minsup < 0):   #Checks if minsup in range (0-1)
+        lowest_minsup = 0;
+   
+    while minsup <= highest_minsup:
+        F = method(data, minsup, args)
+        Plot_points.append((minsup, len(F.keys())));
+        minsup += minsup_increment;
+    if len(Plot_points) >= 2:
+        p = line([Plot_points[0], Plot_points[1]]);
+        for i in range(2, len(Plot_points)):
+            p += line([Plot_points[i], Plot_points[i-1]]);
+        poi = p;
+    elif len(Plot_points) == 1:
+        poi = point(Plot_points[0]);
+    poi = plot(poi, axes = true, axes_labels = ["Support", "Number of Frequent Itemsets"]);
+    poi.show();
+///
+}}}
+
+<p>In this experiment, we study the number of frequent itemsets for varying levels of <em>minsup</em>. To visualize this, we plot minsup on the X-axis and number of frequent itemsets on the Y-axis. The minimum value of minsup is lowest_minsupA, the highest value it will take is highest_minsupA and the intermediate values will be at a difference of minsup_incrementA. You may vary parameters by clicking below. Please note that, minsup takes values between 0-1 and hence, <em>0 &lt; lowest_minsup &le; highest_minsup &le; 1</em>. Please note that the fifth argument is the frequent itemset generation algorithm. Don't forget to click on 'evaluate' after you change them.</p>
+
+{{{id=15|
+lowest_minsupA = 0.01;
+highest_minsupA = 1;
+minsup_incrementA = 0.05
+FrequentItemsets(data, lowest_minsupA, highest_minsupA, minsup_incrementA, apriori)
+///
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+{{{id=17|
+#auto
+import timeit
+
+import datetime
+def Compute(data, lowest_minsup, highest_minsup, minsup_increment, method, _color_, args):
+    Plot_points = []
+    if lowest_minsup > highest_minsup:
+        swap(lowest_minsup, highest_minsup);
+    if(highest_minsup > 1): #Checks if minsup in range (0-1)
+        highest_minsup = 1;
+    if(lowest_minsup < 0):   #Checks if minsup in range (0-1)
+        lowest_minsup = 0;
+    minsup = lowest_minsup;  
+    while minsup <= highest_minsup:
+        now = datetime.datetime.now();
+        for i in range(3):
+              method(data, minsup, args);
+        end = datetime.datetime.now();
+        t = end-now;
+        t = t.seconds*10**6+t.microseconds;
+        t/=3.0;
+        t/=10**3
+        Plot_points.append((minsup, t));
+        minsup += minsup_increment;
+    if len(Plot_points) >= 2:
+        p = line([Plot_points[0], Plot_points[1]], legend_label = '%s'%(str(method.__name__).capitalize()), color=_color_);
+        for i in range(2, len(Plot_points)):
+            p += line([Plot_points[i], Plot_points[i-1]], color=_color_);
+        poi = p;
+    elif len(Plot_points) == 1:
+        poi = point(Plot_points[0], legend_label = '%s'%(str(method.__name__).capitalize()), color=_color_);
+    return poi
+    
+def TimeToCompute(data, lowest_minsup, highest_minsup, minsup_increment, method, color, **args):
+    poi = Compute(data, lowest_minsup, highest_minsup, minsup_increment, method, color, args);
+    poi = plot(poi, axes = true, axes_labels = ["Support", "Time for Frequent Itemset Generation(in ms)"]);
+    poi.show();
+///
+}}}
+
+<p>In this experiment, we study the time taken by Apriori to generate frequent itemsets for varying levels of minsup. To visualize this, we plot minsup on the X-axis and time taken on the Y-axis. The minimum value of minsup is lowest_minsupAT, the highest value it will take is highest_minsupAT and the intermediate values will be at a difference of minsup_incrementAT. You may vary parameters by clicking below. Please note that, minsup takes values between 0-1 and hence, 0 &lt; lowest_minsupAT &le; highest_minsupAT &le; 1. Please note that the fifth argument is the frequent itemset generation algorithm and the sixth argument is the color of the corresponding line-graph. Don't forget to click on 'evaluate' after you change them.</p>
+
+{{{id=18|
+lowest_minsupAT = 0.01;
+highest_minsupAT = 1;
+minsup_incrementAT = 0.05
+TimeToCompute(data, lowest_minsupAT, highest_minsupAT, minsup_incrementAT, apriori, 'red');
+///
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+{{{id=22|
+#auto
+%hideall
+import timeit
+def StartSampling(data, minsups, sample_size):
+    sampling(data, minsups, sample_size);
+
+def ComputeSampling(data, lowest_minsup, highest_minsup, minsup_increment, sample_size):
+    Plot_points = []
+    proc = 0;
+    if lowest_minsup > highest_minsup:
+        swap(lowest_minsup, highest_minsup);
+    if(highest_minsup > 1): #Checks if minsup in range (0-1)
+        highest_minsup = 1;
+    if(lowest_minsup < 0):   #Checks if minsup in range (0-1)
+        lowest_minsup = 0;
+    minsup = lowest_minsup;  
+    while minsup <= highest_minsup:
+        t = timeit.Timer('StartSampling(data, minsups, sample_size)', setup = "from __main__ import StartSampling;data=%r;minsups=%r;sample_size=%r;"%(data,minsup, sample_size)).timeit(number=3); 
+        Plot_points.append((minsup, t));
+        if(proc == 2):
+            print "Completed processing for support %s"%(str(N(minsup,digits = 2)));
+            proc = 0;
+        minsup += minsup_increment;
+    if len(Plot_points) >= 2:
+        p = line([Plot_points[0], Plot_points[1]],legend_label = 'Sampling', color='green');
+        for i in range(2, len(Plot_points)):
+            p += line([Plot_points[i], Plot_points[i-1]], color='green');
+        poi = p;
+    elif len(Plot_points) == 1:
+        poi = point(Plot_points[0], legend_label = 'Sampling', color='green');
+    return poi
+
+def TimeToComputeSampling(data, lowest_minsup, highest_minsup, minsup_increment, sample_size):
+    poi = ComputeSampling(data, lowest_minsup, highest_minsup, minsup_increment, sample_size);
+    poi = plot(poi, axes = true, axes_labels = ["Support", "Time for Frequent Itemset Generation"]);
+    poi.show();
+///
+}}}
+
+{{{id=34|
+
+///
+}}}
+
+<p>In this experiment, we study the time taken by Sampling to generate frequent itemsets for varying levels of minsup. To visualize this, we plot minsup on the X-axis and time taken on the Y-axis. The minimum value of minsup is lowest_minsupST, the highest value it will take is highest_minsupST and the intermediate values will be at a difference of minsup_incrementST. The sample size which is a parameter required by the sampling algorithm is the variable sample_size. You may vary parameters by clicking below. Please note that, minsup takes values between 0-1 and hence, 0 &lt; lowest_minsupST &le; highest_minsupST &le; 1. Please note that the fifth argument is the frequent itemset generation  algorithm and the sixth argument is the color of the corresponding  line-graph. Don't forget to click on 'evaluate' after you change them.</p>
+
+{{{id=25|
+lowest_minsupST = 0.01;
+highest_minsupST = 1;
+minsup_incrementST = 0.05
+TimeToCompute(data, lowest_minsupST, highest_minsupST, minsup_incrementST, sampling, 'green', sample_size=5);
+///
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+{{{id=26|
+#auto
+%hideall
+import timeit
+def StartPartition(data, minsups, partition_size):
+    partitioning(data, minsups, partition_size);
+
+def ComputePartition(data, lowest_minsup, highest_minsup, minsup_increment, partition_size):
+    Plot_points = []
+    proc = 0;
+    if lowest_minsup > highest_minsup:
+        swap(lowest_minsup, highest_minsup);
+    if(highest_minsup > 1): #Checks if minsup in range (0-1)
+        highest_minsup = 1;
+    if(lowest_minsup < 0):   #Checks if minsup in range (0-1)
+        lowest_minsup = 0;
+    minsup = lowest_minsup;  
+    while minsup <= highest_minsup:
+        t = timeit.Timer('StartPartition(data, minsups, partition_size)', setup = "from __main__ import StartPartition;data=%r;minsups=%r;partition_size=%r;"%(data,minsup, partition_size)).timeit(number=5); 
+        Plot_points.append((minsup, t));
+        if(proc == 2):
+            print "Completed processing for support %s"%(str(N(minsup,digits = 2)));
+            proc = 0;
+        minsup += minsup_increment;
+    if len(Plot_points) >= 2:
+        p = line([Plot_points[0], Plot_points[1]], legend_label = 'Partition', color='blue');
+        for i in range(2, len(Plot_points)):
+            p += line([Plot_points[i], Plot_points[i-1]], color='blue');
+        poi = p;
+    elif len(Plot_points) == 1:
+        poi = point(Plot_points[0], legend_label = 'Partition', color='blue');
+    return poi
+
+def TimeToComputePartition(data, lowest_minsup, highest_minsup, minsup_increment, partition_size):
+    poi = ComputePartition(data, lowest_minsup, highest_minsup, minsup_increment, partition_size);
+    poi = plot(poi, axes = true, axes_labels = ["Support", "Time for Frequent Itemset Generation"]);
+    poi.show();
+///
+}}}
+
+<p>In this experiment, we study the time taken by Partition to generate frequent itemsets for varying levels of minsup. To visualize this, we plot minsup on the X-axis and time taken on the Y-axis. The minimum value of minsup is lowest_minsupPT, the highest value it will take is highest_minsupPT and the intermediate values will be at a difference of minsup_incrementPT. The partition size which is a parameter required by the partition algorithm is the variable partition_size. You may vary parameters by clicking below. Please note that, minsup takes values between 0-1 and hence, 0 &lt; lowest_minsupPT &le; highest_minsupPT &le; 1. Please note that the fifth argument is the frequent itemset generation  algorithm and the sixth argument is the color of the corresponding  line-graph. Don't forget to click on 'evaluate' after you change them.</p>
+
+{{{id=27|
+lowest_minsupPT = 0.01;
+highest_minsupPT = 1;
+minsup_incrementPT = 0.05
+TimeToCompute(data, lowest_minsupPT, highest_minsupPT, minsup_incrementPT, partitioning, 'blue', partition_size = 5);
+///
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+{{{id=31|
+#auto
+def CompareAlgorithms(data, lowest_minsup, highest_minsup, minsup_increment, methods, colors, **args):
+    print 'Evaluating...'
+    if(len(methods) == 0):
+         return;
+    if(len(methods) != len(colors)):
+         print 'Array of line graph colors not of the same length as the number of methods'
+    poiA = Compute(data, lowest_minsup, highest_minsup, minsup_increment, methods[0], colors[0], args);
+    p = plot(poiA, axes = true, axes_labels = ["Support", "Time for Frequent Itemset Generation(ms)"]);
+    print 'Completed %s'%((methods[0].__name__).capitalize())
+    for i in range(1, len(methods)):
+       poi = Compute(data, lowest_minsup, highest_minsup, minsup_increment, methods[i], colors[i], args);
+       p += plot(poi);
+       print 'Completed %s'%((methods[i].__name__).capitalize())
+    p.show(axes=true);
+///
+}}}
+
+<p>In this experiment, we compare the the time taken by Apriori, Partition and Sampling algorithms to generate frequent itemsets for varying levels of minsup. To visualize this, we plot minsup on the X-axis and time taken on the Y-axis. The minimum value of minsup is lowest_minsup, the highest value it will take is highest_minsup and the intermediate values will be at a difference of minsup_increment. These parameters are common to all the three algorithms. The partition size which is a parameter required by the partition algorithm is the variable partition_size and the sample size which is the parameter required by the sampling algorithm is the variable sample_size. You may vary parameters by clicking below. Please note that, minsup takes values between 0-1 and hence, 0 &lt; lowest_minsup &le; highest_minsup &le; 1. Please note that the fifth argument taken by the function CompareAlgorithms is a list of frequent itemset generation algorithms and the sixth argument is the list of colors that their corresponding line graphs take. Don't forget to click on 'evaluate' after you change them.</p>
+
+{{{id=32|
+lowest_minsup = 0.5;
+highest_minsup = 1;
+minsup_increment = 0.05
+CompareAlgorithms(data, lowest_minsup, highest_minsup, minsup_increment, [apriori, sampling, partitioning], ['red', 'green', 'blue'], sample_size = 5, partition_size = 5);
+///
+Evaluating...
+Completed Apriori
+Completed Sampling
+Completed Partitioning
+<html><font color='black'><img src='cell://sage0.png'></font></html>
+}}}
+
+<h2 style="color: green;">Assignment</h2>
+<ol>
+<li> Study the behaviour of the sampling and partition by varying sample_size and partition_size for the dataset below:<br /><br /> 
+<table border="1" cellspacing="0px" cellpadding="5px">
+<tbody>
+<tr>
+<th>TID</th><th>items_bought</th>
+</tr>
+<tr>
+<td>T100</td>
+<td>{M, O, N, K, E, Y}</td>
+</tr>
+<tr>
+<td>T200</td>
+<td>{D, O, N, K, E, Y}</td>
+</tr>
+<tr>
+<td>T300</td>
+<td>{M, A, K, E}</td>
+</tr>
+<tr>
+<td>T400</td>
+<td>{M, U, C, K, Y}</td>
+</tr>
+<tr>
+<td>T500</td>
+<td>{C, O, O, K, I, E}</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Comment on the number  of number of itemsets generated when minsup is varied for the above dataset.<br /><br /> </li>
+</ol>
+<h2 style="color: green;">References</h2>
+<ul>
+<li>FIMI '03: Workshop on Frequent Itemset Mining Implementations, Bart Goethals, Mohammed Zaki.</li>
+<li> R. Agarwal, T. Imielinski and A. Swami. Mining Association Rules between sets of items in large databases. In Proc. 1993 ACM SIGMOD Intl. Conf. Management of Data (SIGMOD 93), Pg. 207-216, Washington D.C., May 1993. </li>
+<li> R. Agarwal and R. Srikant. Fast Algorithms for mining association rules in large databases. In research report RJ 9839, IBM Almaden Research Center, San Jose, CA, June, 1994.</li>
+<li><span id="cell_outer_9">Mohammed Javeed Zaki, Srinivasan Parthasarathy,  Wei Li, Mitsunori Ogihara. Evaluation of Sampling for Data Mining of  Association Rule (RIDE '97).&nbsp; In Proc. of the 7th International Workshop  on Research  Issues in Data Engineering, High Performance Database   Management for Large-Scale Applications. </span></li>
+<li><span id="cell_outer_9">Ashok Savasere,                                                                                    Edward Omiecinski,  Shamkant Navathe. An Efficient Algorithm for Mining Association Rules in  Large Databases (VLDB 95), Pg. 432-444, Zurich, Switzerland, 1995.</span></li>
+</ul>
+<br /><br />
+For providing <b>Feedback</b> please click <a href="http://virtual-labs.ac.in/feedback/">here</a>.<br />
+
+<br />
+- Sponsored by MHRD: <a href="http://virtual-labs.ac.in/nmeict/" target="_blank">click</a>
+- Licensing Terms: <a href="http://virtual-labs.ac.in/licensing/" target="_blank">click</a>
+
+{{{id=33|
+
+///
+}}}
