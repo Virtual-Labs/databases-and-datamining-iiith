@@ -4,4 +4,4 @@
 #cd sage
 
 address=$(hostname --ip-address)
-screen -S "Sage_Server" sage -c "inotebook(interface=" "'$address'" ",port=80,accounts=true)"
+sage -c "inotebook(interface=" "'$address'" ",port=80,accounts=true)"
