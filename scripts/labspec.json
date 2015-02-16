@@ -6,7 +6,7 @@
                 "build_steps": {
                     "build": ["sudo dpkg --configure -a", "sudo apt-get install -f", "sudo apt-get install -y sagemath-upstream-binary","sh create_sagenb", "make all -C ../src",  "sh start_sage"], 
                     "configure": [], 
-                    "post_build": [], 
+                    "post_build": ["sudo dpkg --configure -a", "sudo apt-get install -f", "sudo apt-get install -y sagemath-upstream-binary"], 
                     "pre_build": ["sudo apt-get update", "sudo apt-get remove -y apache2", "sudo apt-get purge -y apache2*", "sudo apt-get autoremove -y", "sudo apt-get install -y make m4 build-essential gcc gfortran libssl-dev", "sudo apt-get install -y python-software-properties", "sudo -E apt-add-repository -y ppa:aims/sagemath","sudo apt-get update", "sudo apt-get install -y dvipng"], 
                     "status": []
                 }, 
