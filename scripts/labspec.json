@@ -4,7 +4,7 @@
             "platform": {
                 "arch": "i386", 
                 "build_steps": {
-                    "build": ["sh create_sagenb", "make all -C ../src",  "sh start_sage"], 
+                    "build": ["sh change-shell.sh", "./create-sage.exp", "make all -C ../src",  "sh start_sage"], 
                     "configure": [], 
                     "post_build": [], 
                     "pre_build": ["sh pre-build-script.sh "], 
