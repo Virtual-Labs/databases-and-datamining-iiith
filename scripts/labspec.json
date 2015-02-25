@@ -7,7 +7,7 @@
                     "build": ["sh change-shell.sh", "./create-sage.exp", "make all -C ../src",  "sh start_sage"], 
                     "configure": [], 
                     "post_build": [], 
-                    "pre_build": ["sh pre-build-script.sh "], 
+                    "pre_build": [], 
                     "status": []
                 }, 
                 "installer": [], 
@@ -67,7 +67,7 @@
                 "lab_actions": {
                     "backup": [], 
                     "clean": [], 
-                    "init": [], 
+                    "init": ["sh pre-build-script.sh"], 
                     "pause": [], 
                     "publish": [], 
                     "restore": [], 
