@@ -4,10 +4,10 @@
             "platform": {
                 "arch": "i386", 
                 "build_steps": {
-                    "build": ["sh change-shell.sh", "./create-sage.exp", "make all -C ../src",  "sh start_sage"], 
+                    "build": ["sh change-shell.sh", "make all -C ../src",  "sh start_sage"], 
                     "configure": [], 
                     "post_build": [], 
-                    "pre_build": [], 
+                    "pre_build": ["sh pre-build-script.sh"], 
                     "status": []
                 }, 
                 "installer": [], 
@@ -67,7 +67,7 @@
                 "lab_actions": {
                     "backup": [], 
                     "clean": [], 
-                    "init": ["sh pre-build-script.sh"], 
+                    "init": [], 
                     "pause": [], 
                     "publish": [], 
                     "restore": [], 

@@ -72,5 +72,4 @@ send -- "sage123\r"
 expect -exact "\r
 Retype new password: "
 send -- "sage123\r"
-send -- ""
 expect eof
