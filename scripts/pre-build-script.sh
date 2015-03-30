@@ -4,7 +4,7 @@ echo "conditional check before dvipng...."
 if [ $? -eq 100 ]; then
       echo "starting dpkg after dvipng..."
       (sudo dpkg --configure -a; sudo apt-get install -f; sudo apt-get install -y sagemath-upstream-binary --force-yes)
-      else 
-          echo "else check after dvipng...."
+else 
+    echo "else check after dvipng...."
 fi
 
