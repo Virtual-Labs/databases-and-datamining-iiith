@@ -3,7 +3,7 @@
 log_file=/root/log_file.log
 touch $log_file
 echo "conditional check before dvipng...." >> $log_file
-`sudo apt-get update; sudo apt-get install -y make m4 build-essential gcc gfortran libssl-dev python-software-properties expect expect-dev; sudo -E apt-add-repository -y ppa:aims/sagemath; sudo apt-get update; sudo apt-get install -y dvipng`
+`sudo apt-get update; sudo apt-get install -y make m4 build-essential gcc gfortran libssl-dev python-software-properties expect expect-dev ipython; sudo -E apt-add-repository -y ppa:aims/sagemath; sudo apt-get update; sudo apt-get install -y dvipng`
 
 ret_code=$?
 echo "ret code from dvipng $ret_code" >> $log_file
