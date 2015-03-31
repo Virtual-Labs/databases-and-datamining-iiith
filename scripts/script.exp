@@ -45,7 +45,7 @@ if {$force_conservative} {
 set timeout -1
 spawn $env(SHELL)
 match_max 100000
-expect -exact "\]0;root@test: ~/labs/databases-and-datamining-iiith/scriptsroot@test:~/labs/databases-and-datamining-iiith/scripts# "
+expect -exact "\]0;root $: ~root $:~# "
 send -- "sage -c 'notebook(interface=\"\",directory=\"/root/.sage/sage_notebook.sagenb\",port=80,accounts=true)'"
 expect -exact "sage -c 'notebook(interface=\"\",directory=\"/root/.sage/sage_notebook.sagenb\",port=80,accounts=true)'"
 send -- "\r"
@@ -115,6 +115,6 @@ expect -exact "^C2015-03-13 17:30:00+0530 \[-\] Quitting all running worksheets.
 2015-03-13 17:30:00+0530 \[-\] Stopping factory <__builtin__.QuietSite instance at 0x7cd3ab8>\r
 2015-03-13 17:30:00+0530 \[-\] Main loop terminated.\r
 2015-03-13 17:30:00+0530 \[-\] Server Shut Down.\r
-\]0;root@test: ~/labs/databases-and-datamining-iiith/scriptsroot@test:~/labs/databases-and-datamining-iiith/scripts# \[K"
+\]0;root $: ~root $:~# \[K"
 send -- ""
 expect eof
