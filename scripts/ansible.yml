@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  remote_user: root
+  
+  tasks:
+   - name : update system
+     shell : apt-get update    
+  
+   - name : install dependencies
+     shell : apt-get install -y m4 build-essential gcc gfortran libssl-dev
+
+   - name : install python-software-properties
+     shell : apt-get install python-software-properties
+   
+   - name : add sage ppa repo
+     shell : apt-add-repository ppa:aims/sagemath
+ 
+   - name : update system
+     shell : apt-get update
+
+   - name : install dvipng
+     shell : apt-get install dvipng
+
+   - name : install sage binary
+     shell : apt-get install sagemath-upstream-binary
+  
+   - name : invoke create_sagenb script
+     command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/create_sagenb -i -y
+
+   - name : invoke start_sage script
+     command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/start_sage -i -y
+
