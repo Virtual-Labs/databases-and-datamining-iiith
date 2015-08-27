@@ -4,25 +4,37 @@
   
   tasks:
    - name : update system
-     shell : apt-get update    
+     apt : update_cache=yes    
   
-   - name : install dependencies
-     shell : apt-get install -y m4 build-essential gcc gfortran libssl-dev
+   - name : install m4
+     apt : name=m4 state=present
+
+   - name : install build-essential
+     apt : name=build-essential state=present 
+
+   - name : install gcc
+     apt : name=gcc state=present
+
+   - name : install gfortran
+     apt : name=gfortran state=present
+
+   - name : install libssl-dev
+     apt : name=libssl-dev state=present
 
    - name : install python-software-properties
-     shell : apt-get install python-software-properties
+     apt : name=python-software-properties state=present
    
    - name : add sage ppa repo
-     shell : apt-add-repository ppa:aims/sagemath
- 
-   - name : update system
-     shell : apt-get update
+     apt_repository: repo='ppa:aims/sagemath'
 
+   - name : update system
+     apt : update_cache=yes
+ 
    - name : install dvipng
-     shell : apt-get install dvipng
+     apt : name=dvipng state=present
 
    - name : install sage binary
-     shell : apt-get install sagemath-upstream-binary
+     apt : name=sagemath-upstream-binary state=present
   
    - name : invoke create_sagenb script
      command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/create_sagenb -i -y
