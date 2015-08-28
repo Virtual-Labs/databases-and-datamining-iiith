@@ -1,0 +1,13 @@
+span.term {
+   font-family: monospace;
+   font-style: normal;
+   font-weight: bold;
+   color: #556B2F;
+}
+
+#latest_temp{
+  padding: 50px;
+}
+#latest_temp1{
+  padding: 150px;
+}

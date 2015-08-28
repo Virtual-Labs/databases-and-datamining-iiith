@@ -1,0 +1,391 @@
+!-- This file needs to be edited by the lab developer to suit
+the requirements of their lab in particular.-->
+
+<!-- Add class="default" to include any element as it is
+specified in default.html. 
+Do not include class="default" to the elements that you want to
+edit -->
+
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<div id="experiment"> <!-- The Experiment Document Container-->
+
+  <!-- The lab Header contains the logo and the name of the lab,
+  usually displayed on the top of the page-->
+
+  <header id="experiment-header" class="default">
+  
+    <div id="experiment-header-logo" class="logo">
+      <!-- Enclose the logo image of your lab or write it in 
+      text-->
+      <img src="../images/logo.jpg" />
+    </div>
+
+    <div id="experiment-header-heading" class="heading">
+      <!-- Write the name of your lab and link it to the home 
+      page of your lab (h1 tag is preferred while writing your 
+      lab name)-->
+      <a href="../index.html">Datamining Lab</a>	
+    </div>
+
+    <!-- Add any additional element you want to add to the lab 
+    header, For example : Help (Enclosing them with suitable 
+    div is recommended)-->
+
+  </header>
+
+
+  <!-- The lab article is the main content area where all the 
+  experiment content sits-->
+  <article id="experiment-article">
+  
+    <!-- The lab article has an header, optional navigational 
+    menu, number of sections, an optional sidebar and a closing 
+    footer-->
+     <div id="experiment-article-breadcrumb" class="breadcrumb">
+     </div>
+    
+      <header id="experiment-article-heading" class="heading">
+        <!-- You can add a welcome message or title of the 
+        experiment here -->
+	The Apriori Algorithm
+        <!-- Add any additional element if required with proper 
+        enclosing-->
+      </header>
+
+      <!-- Navigation menu is useful to organize the view of 
+      multiple sections inside the article-->
+      <nav id="experiment-article-navigation" class="default">
+        <ul id="experiment-article-navigation-menu">
+          <!-- The menu can be dynamically generated to contain 
+          the headings of your sections or instead write the 
+          menu items of your choice individually enclosedu in 
+          <li> tag as shown below-->
+        </ul>
+      </nav>
+
+      <!-- All the sections of your lab or experiment can be 
+      enclosed together with a div element as shown below-->
+      <div id="experiment-article-sections">
+
+        <!-- First section of the article-->
+        <section id="experiment-article-section-1">
+          
+          <div id="experiment-article-section-1-icon" 
+          class="icon">
+	    <!-- Enclose the icon image of your lab -->
+	    <img src="../images/introduction.jpg" />
+	  </div>	
+          
+          <!-- The heading for the section can be enclosed in a 
+          div tag. -->
+          <div id="experiment-article-section-1-heading" 
+          class="heading">
+            Introduction
+          </div>
+
+          <!-- Write the section content inside a paragraph 
+          element, You can also include images with <img> tag -->
+          <div id="experiment-article-section-1-content" 
+          class="content">	
+            <p>
+
+In data mining, association rule learning is a popular and well researched method for discovering interesting relations between variables in large databases. For example, the rule <b>&#123;onions, potatoes&#125; $\longrightarrow$ &#123;burger&#125;</b> found in the sales data of a supermarket would indicate that if a customer buys onions and potatoes together, he or she is likely to also buy burger. Such information can be used as the basis for decisions about marketing activities such as, e.g., promotional pricing or product placements. In addition to the above example from market basket analysis association rules are employed today in many application areas including web usage mining, intrusion detection and bioinformatics.
+
+        </div>
+
+
+      </section>
+
+      <!-- Second section of the article-->
+      <section id="experiment-article-section-2">
+        
+        <div id="experiment-article-section-2-icon" 
+        class="icon">
+	  <!-- Enclose the icon image of your lab. -->
+	  <img src="../images/theory.jpg" />
+	</div>
+				
+        <!-- The heading for the section can be enclosed in a 
+        div tag. -->
+        <div id="experiment-article-section-2-heading" 
+        class="heading">
+          Theory
+        </div>
+
+
+        <!-- Write the section content inside a paragraph 
+        element, we can also include images with <img> tag -->
+        <div id="experiment-article-section-2-content" 
+        class="content">
+          <p>
+<h2>Problem Formulation:</h2>
+<span id="latest_temp">
+<ol>
+<li>Set of items: $I$</li>
+<li>Set of transactions: $D$ ($t \in D \Rightarrow  t \subseteq I$)</li>
+<li>For an itemset $X \subseteq I$</li>
+<li>$support(X)$ = number of transactions containing $X / |D|$</li>
+<li>Association rule: r=(X-Y &#61; &#62; Y), with Y &#8834; X &#8838; I  </li>
+<li>Support(r) = Support(X)</li>
+<li>Confidence(r) = Support(X)/Support(X-Y) where X-Y is the set difference </li>
+<li><b>INPUT:</b> (I, D, minsup, minconf) with 0 &#60;&#61; minsupport &#60;&#61; 1 and 0 &#60;minconfidence&#60;1 </li>
+<li><b>OUTPUT:</b> all rules r s.t. support(r) &#62;&#61; minsupport and confidence(r) &#62;&#61;minconfidence </li>
+</ol>
+</span>
+<br />
+<h3>Psuedo Code:</h3>
+<span id="latest_temp1">
+<pre class="pCode">
+Apriori (T, minsupport)
+{
+	L<sub>1</sub>  &#60;- large 1-itemsets 
+	k &#60;- 2
+	while L<sub>k-1</sub> &ne; &#934; 
+		C<sub>k</sub> &#60;- Generate(L<sub>k - 1</sub>) //The candidate generation proceedure where a
+		candidate c = {A<sup>1</sup>,...A<sup>n</sup>} is generated if for all A<sup>i</sup> &#949; c, (c - A<sup>i</sup>) &#949; L<sub>k - 1</sub>
+
+		for transactions t &#949; T
+			C<sub>t</sub> &#60;- Subset(C<sub>k</sub>,t)
+			for candidates c &#949; C<sub>t</sub>
+				count&#91;c&#93;- count&#91;c&#93;+1 
+		L<sub>k</sub> &#60;- &#123; c &#949;  C<sub>k</sub> | count&#91;c&#93; &#62;&#61; minsupport  
+		k &#60;- k+1 
+	return &#8746; L<sub>k</sub>
+}
+</pre>
+</span>
+         </p>
+
+        </div>
+      </section>
+
+
+      <section id="experiment-article-section-3">
+        
+        <div id="experiment-article-section-3-icon" 
+        class="icon">
+	  <!-- Enclose the icon image of your lab. -->
+	  <img src="../images/objective.jpg" />
+	</div>
+     
+        <div id="experiment-article-section-3-heading" 
+        class="heading">
+          Objective
+        </div>
+
+        <div id="experiment-article-section-3-content" 
+        class="content">
+          <p>
+
+Through this experiment we will explain frequent patterns and an efficient algorithm to discover them (Apriori) from large datasets.
+In data mining, Apriori is a classic algorithm for learning association rules. Apriori is designed to operate on databases containing transactions (for example, collections of items bought by customers, or click-streams of a websites).
+          </p> 
+       
+
+        </div>
+
+      </section>
+
+
+                    <section id="experiment-article-section-6">
+      
+          <div id="experiment-article-section-6-icon" 
+          class="icon">
+	    <!-- Enclose the icon image of your lab.-->
+	    <img src="../images/quizzes.jpg" />
+	  </div>
+
+          <div id="experiment-article-section-6-heading" 
+          class="heading">
+            Assigment
+          </div>
+
+          <div id="experiment-article-section-6-content" 
+          class="content">
+            
+            <p>
+<ol>
+<li>
+
+Define min-support and min-confidence with an example.
+</li>
+<li>
+Find all frequent itemsets using apriori<br /><br />
+<table border = '1' cellspacing='0px' cellpadding='5px'>
+<tr><th>TID</th><th>items_bought</th></tr>
+<tr><td>T100</td><td>{M, O, N, K, E, Y}</td></tr>
+<tr><td>T200</td><td>{D, O, N, K, E, Y}</td></tr>
+<tr><td>T300</td><td>{M, A, K, E}</td></tr>
+
+<tr><td>T400</td><td>{M, U, C, K, Y}</td></tr>
+<tr><td>T500</td><td>{C, O, O, K, I, E}</td></tr>
+</table><br />
+Minimum support = 60%, minimum confidence = 80%<br /><br />
+</li>
+<li>
+Compute the frequent itemsets for the same datasets for minimum support 30% and confidence 80%. Comment on the number 
+of rules output in both cases.<br /><br />
+</li>
+</ol>
+ 
+            </p>
+
+          </div>
+
+        </section>
+
+	<section id="experiment-article-section-7">
+	  
+          <div id="experiment-article-section-7-icon" 
+          class="icon">
+    <!-- Enclose the icon image of your lab. -->
+	    <img src="../images/procedure.jpg" />
+	  </div>
+	
+          <div id="experiment-article-section-7-heading" 
+          class="heading">
+	    Procedure
+	  </div>
+	
+          <div id="experiment-article-section-7-content" 
+          class="content">
+	    <p>
+	      Procedure for the experiment is as follows.
+		</p>
+		<div id="pyInputPane">
+		<center>
+		Write your Python code here: <br />
+
+		<textarea class="codeInputPane" id="pyInput" cols="55" rows="20" wrap="off"></textarea>
+		<br />
+		<button id="executeBtn" class="bigBtn" type="button" onclick="temp()">Visualize execution</button>
+		</center>
+
+		</div>
+		<table border="0" id="pyOutputPane">
+<tr>
+<td valign="top">
+
+<center>
+
+<div id="pyCodeOutputDiv">
+
+Use <b>left</b> and <b>right</b> arrow keys to step through this code:
+<table id="pyCodeOutput"></table>
+
+</div>
+
+<div id="editCodeLinkDiv">
+
+<button id="editBtn" class="medBtn" type="button" onclick="temp5()">Edit code</button>
+
+</div>
+
+<div id="vcrControls">
+  <button id="jmpFirstInstr" tyEe="button"  onclick="temp1()">First</button>
+  <button id="jmpStepBack" type="button" onclick="temp2()">&lt; Back</button>
+  <span id="curInstr">Step ? of ?</span>
+  <button id="jmpStepFwd" type="button" onclick="temp3()">Forward &gt;</button>
+  <button id="jmpLastInstr" type="button" onclick="temp4()">Last &gt;&gt;</button>
+</div>
+
+<div id="errorOutput"></div>
+</center>
+
+Program output:
+<br/>
+<textarea id="pyStdout" cols="50" rows="13" wrap="off" readonly></textarea>
+
+
+</td>
+<td valign="top">
+
+<div id="dataViz"></div>
+
+</td>
+</tr>
+</table>
+
+	  </div>
+	
+        </section>
+<section id="experiment-article-section-4">
+
+        <div id="experiment-article-section-4-icon" 
+        class="icon">
+	  <!-- Enclose the icon image of your lab.-->
+	  <img src="../images/simulation.jpg" />
+	</div>
+
+        <div id="experiment-article-section-4-heading" 
+        class="heading">
+          Further Reading
+        </div>
+
+        <div id="experiment-article-section-4-content" 
+        class="content">
+          <p>
+				<ul>
+				<li>
+				R. Agarwal, T. Imielinski and A. Swami. Mining Association Rules between sets of items in large databases. In Proc. 1993 ACM SIGMOD Intl. Conf. Management of Data (SIGMOD 93), Pg. 207-216, Washington D.C., May 1993.
+				</li>
+				<li>
+				R. Agarwal and R. Srikant. Fast Algorithms for mining association rules in large databases. In research report RJ 9839, IBM Almaden Research Center, San Jose, CA, June, 1994.
+				</li>
+				<li>
+				R. Agarwal and R. Srikant. Fast Algorithms for mining association rules. In Proc. 1994 Int. Conf. Very Large Databases (VLDB 94), Pg. 487-499, Santiago, Chile, Sept 1994.
+				</li>
+
+				<li>
+				R. Agarwal, M. Mehta, J. Shafer, R. Srikant, A. Arning, T. Bollinger. The Quest data mining system. In Proc. 1996 Int. Conf. Data Mining and Knowledge Discovery (KDD '96)
+				</li>
+				<li>
+				S. Brin, R. Motwani, C. Silverstein. Beyond market basket: Generalizing association rules to correaltions. In Proc. 1997, ACM SIGMOD, Int. Conf Management of Data (SIGMOD '97), Pg. 265-276, Tucson, AZ, May 1997.
+				</li>
+				</ul>
+
+<br />
+	        
+            
+          </p>
+        </div>
+
+      </section>
+
+
+	
+      </div>
+
+
+    <!-- An article can have a sidebar that contain related 
+    links and additional material (however it is kept optional 
+    at this moment) -->
+    <aside id="lab-article-sidebar" class="default">
+      <!-- put the content that you want to appear in the 
+      sidebar -->	
+    </aside>
+
+
+    <!-- Article footer can display related content and 
+    additional links -->						
+    <footer id="lab-article-footer" class="default">
+      <!-- Put the content that you want to appear here -->
+    </footer>
+
+  </article>
+
+
+  <!-- Links to other labs, about us page can be kept the lab 
+  footer-->
+  <footer id="lab-footer" class="default">
+    <!-- Put the content here-->
+  </footer>
+
+</div>		
+
+</body>
+</html>

@@ -1,0 +1,300 @@
+
+
+<center>
+<img src="http://virtual-labs.ac.in/images/virtualLabsLogo.jpg" width="1220" alt="logo"/> 
+</center>
+
+<h1 style="color: green;">The DBSCAN Algorithm</h1>
+<h2 style="color: green;">Introduction</h2>
+<p>Cluster analysis or clustering is the assignment of a set of observations into subsets (called clusters) so that observations in the same cluster are similar in some sense. Clustering is a method of unsupervised learning, and a common technique for statistical data analysis used in many fields, including machine learning, data mining, pattern recognition, image analysis and bioinformatics.</p>
+<h2 style="color: green;">Objective</h2>
+<p>Through this experiment we will explain clustering using the DBSCAN ((Density-Based Spatial Clustering of Applications with Noise)clustering algorithm on a dataset. In data mining, DBSCAN is a density-based clustering algorithm. It finds a number of clusters starting from the estimated density distribution of corresponding nodes. DBSCAN is one of the most common clustering algorithms and also most cited in scientific literature.</p>
+<h2 style="color: green;">Theory</h2>
+<h3>Basic Idea:</h3>
+<p>DBSCAN's definition of a cluster is based on the notion of density reachability. Basically, a point $q$ is directly density-reachable from a point $p$ if it is not farther away than a given distance $\epsilon$ (i.e., is part of its $\epsilon$-neighborhood), and if $p$ is surrounded by sufficiently many points such that one may consider $p$ and $q$ be part of a cluster. $q$ is called density-reachable from $p$ if there is a sequence  of $p_1,...,p_n$ points with and $p_1$ = $p$ and $p_n$ = $q$ where each $p_i$ + 1 is directly density-reachable from $p_i$. Note that the relation of density-reachable is not symmetric (since $q$ might lie on the edge of a cluster, having insufficiently many neighbors to count as a genuine cluster element), so the notion of density-connected is introduced: two points $p$ and $q$ are density-connected if there is a point $o$ such that $o$ and $p$ as well as $o$ and $q$ are density-reachable. A cluster, which is a subset of the points of the database, satisfies two properties:</p>
+<ol>
+<li>All points within the cluster are mutually density-connected.</li>
+<li>If a point is density-connected to any point of the cluster, it is part of the cluster as well.</li>
+</ol>
+<h3>Psuedo Code:</h3>
+<pre>DBSCAN(D, eps, MinPts)
+{
+   C = 0
+   for each unvisited point P in dataset D
+      mark P as visited
+      N = getNeighbors (P, eps)
+      if sizeof(N) &lt; MinPts
+         mark P as NOISE
+      else
+         C = next cluster
+         expandCluster(P, N, C, eps, MinPts)
+}
+          
+expandCluster(P, N, C, eps, MinPts)
+{
+   add P to cluster C
+   for each point P' in N 
+      if P' is not visited
+         mark P' as visited
+         N' = getNeighbors(P', eps)
+         if sizeof(N') &gt;= MinPts
+            N = N joined with N'
+      if P' is not yet member of any cluster
+         add P' to cluster C
+}
+</pre>
+<h2 style="color: green;">Procedure</h2>
+<p><br /> We present the DBSCAN simulation in the next section. Some points to note are as follows:</p>
+<ol>
+<li>The minpts and eps for the experiment are 2, 0.2 respectively </li>
+<li> Clicking on 'evaluate' will run the algorithm.</li>
+</ol>
+<h2 style="color: green;">Simulation</h2>
+<p>Consider the following dataset:<br /><br /><br /></p>
+
+{{{id=2|
+#auto
+data = [
+(5.1,3.5,1.4,0.2), #each row here is a record
+(4.9,3.0,1.4,0.2),
+(4.7,3.2,1.3,0.2),
+(4.6,3.1,1.5,0.2),
+(5.0,3.6,1.4,0.2),
+(5.4,3.9,1.7,0.4),
+(4.6,3.4,1.4,0.3),
+(5.0,3.4,1.5,0.2),
+(4.4,2.9,1.4,0.2),
+(4.9,3.1,1.5,0.1),
+(5.4,3.7,1.5,0.2),
+(4.8,3.4,1.6,0.2),
+(4.8,3.0,1.4,0.1),
+(5.1,3.4,1.5,0.2),
+]
+///
+}}}
+
+{{{id=12|
+#auto
+data = [
+(5.1,3.5,1.4,0.2), #each row here is a record
+(4.9,3.0,1.4,0.2),
+(4.7,3.2,1.3,0.2),
+(4.6,3.1,1.5,0.2),
+(5.0,3.6,1.4,0.2),
+(5.4,3.9,1.7,0.4),
+(4.6,3.4,1.4,0.3),
+(5.0,3.4,1.5,0.2),
+(4.4,2.9,1.4,0.2),
+(4.9,3.1,1.5,0.1),
+(5.4,3.7,1.5,0.2),
+(4.8,3.4,1.6,0.2),
+(4.8,3.0,1.4,0.1),
+(5.1,3.4,1.5,0.2),
+]
+///
+}}}
+
+You may change the data above and click on 'evaluate' if you want to try out the algorithm with a different sample dataset.
+
+{{{id=7|
+#auto
+minPts = 2
+eps    = 0.2
+///
+}}}
+
+You may choose a different minPts and eps threshold by clicking above. Don't forget to click on 'evaluate' after you change the threshold.
+
+Following is the DBSCAN along with other funcations input the data, minimum number of points required to form a cluster and eps.
+
+{{{id=3|
+#auto
+def DBSCAN(data, minPts,eps):
+        D         = {};
+        iterator  = 0;
+        for line in data:
+            iterator    = iterator + 1;
+            D[iterator] = [(line),'U','NC'];
+        
+        C = 0
+        outputColl = {}
+	for points in D:
+		if(D[points][1] == 'U'):
+			D[points][1] = 'V'
+			N = getNeighbors(points,D)
+			if len(N) < minPts:
+				D[points][2] = 'N'
+			else :
+				C = C+1
+				outputColl[C]= []
+				expandCluster(points,N,C,outputColl,D)
+        clusterID = 0
+        for cluster in outputColl:
+	    print "Cluster with cluster ID : ",clusterID,"\n"
+            for clusterPoint in outputColl[cluster]:
+                print D[clusterPoint][0]
+            print "\n\n\n"
+            clusterID = clusterID + 1
+            
+        print "\n Outlier Points\n"            
+        for points in D:
+            if(D[points][2] == 'N'):
+                print D[points][0]
+
+def getNeighbors(points,D):
+	N = []
+	for point in D:
+		if(point == points):
+			continue
+		if(euclidDistance(points,point,D) <= eps):
+			N.append(point)
+	return N
+
+def euclidDistance(point,points,D):
+	distCal = 0.00
+	point   = D[point][0]
+	points  = D[points][0]
+
+	for iterator in range(0,len(point)):
+		distTemp = float(point[iterator]) - float(points[iterator])
+		distCal += distTemp*distTemp	
+	return math.sqrt(distCal)
+		
+def filterList(N,N_New):
+	newOutput = []
+	for newPoint in N_New:
+		findState = 0
+		for point in N:
+			if(point == newPoint):
+				findState = 1
+				break
+		if(findState == 0):
+			newOutput.append(newPoint)
+	return newOutput
+
+
+
+def expandCluster(P,N,C,outputColl,D):
+	D[P][2] = 'C'
+	outputColl[C].append(P)
+	while(1):
+		if(len(N)) == 0:
+			break
+		points = N.pop()
+		if(D[points][1] == 'U'):
+			D[points][1] = 'V'
+			N_New = getNeighbors(points,D)
+			if(len(N_New) >= minPts):
+				N = N + filterList(N,N_New)
+
+		if(D[points][2] != 'C'):
+			D[points][2] = 'C'
+			outputColl[C].append(points)
+///
+}}}
+
+{{{id=13|
+
+///
+}}}
+
+Finally, here is the code for the function call for DBSCAN algorithm.
+
+{{{id=14|
+
+///
+}}}
+
+{{{id=15|
+
+///
+}}}
+
+{{{id=5|
+#auto
+DBSCAN(data, minPts, eps);
+///
+Cluster with cluster ID :  0 
+
+(5.10000000000000, 3.50000000000000, 1.40000000000000, 0.200000000000000)
+(5.10000000000000, 3.40000000000000, 1.50000000000000, 0.200000000000000)
+(5.00000000000000, 3.40000000000000, 1.50000000000000, 0.200000000000000)
+(5.00000000000000, 3.60000000000000, 1.40000000000000, 0.200000000000000)
+
+
+
+
+Cluster with cluster ID :  1 
+
+(4.90000000000000, 3.00000000000000, 1.40000000000000, 0.200000000000000)
+(4.80000000000000, 3.00000000000000, 1.40000000000000, 0.100000000000000)
+(4.90000000000000, 3.10000000000000, 1.50000000000000, 0.100000000000000)
+
+
+
+
+
+ Outlier Points
+
+(4.70000000000000, 3.20000000000000, 1.30000000000000, 0.200000000000000)
+(4.60000000000000, 3.10000000000000, 1.50000000000000, 0.200000000000000)
+(5.40000000000000, 3.90000000000000, 1.70000000000000, 0.400000000000000)
+(4.60000000000000, 3.40000000000000, 1.40000000000000, 0.300000000000000)
+(4.40000000000000, 2.90000000000000, 1.40000000000000, 0.200000000000000)
+(5.40000000000000, 3.70000000000000, 1.50000000000000, 0.200000000000000)
+(4.80000000000000, 3.40000000000000, 1.60000000000000, 0.200000000000000)
+}}}
+
+This is just a call to the DBSCAN function. Clicking on 'evaluate' in this cell will show the output of DBSCAN.
+
+
+
+<h2 style="color: green;">Assignment</h2>
+<ol>
+<li>
+Find all clusters with minPts = 2 and eps = 0.3<br /><br />
+<table border = '1' cellspacing='0px' cellpadding='5px'>
+<tr><th>6.7,3.1,5.6,2.4</th></tr>
+<tr><th>6.9,3.1,5.1,2.3</th></tr>
+<tr><th>5.8,2.7,5.1,1.9</th></tr>
+<tr><th>6.8,3.2,5.9,2.3</th></tr>
+<tr><th>6.7,3.3,5.7,2.5</th></tr>
+<tr><th>6.7,3.0,5.2,2.3</th></tr>
+<tr><th>6.3,2.5,5.0,1.9</th></tr>
+<tr><th>6.5,3.0,5.2,2.0</th></tr>
+<tr><th>6.2,3.4,5.4,2.3</th></tr>
+</table><br />
+</li>
+<li>
+Compute the clusters  for the same dataset for minPts = 3 and eps = 0.4. Comment on the clusters obtained in both cases.<br /><br />
+</li>
+</ol>
+
+<h2 style="color: green;">References</h2>
+<ul>
+<li>Martin Ester, Hans-Peter Kriegel, Jorg Sander, Xiaowei Xu (1996). A density-based algorithm for discovering clusters in large spatial databases with noise. In Evangelos Simoudis, Jiawei Han, Usama M. Fayyad. Proceedings of the Second International Conference on Knowledge Discovery and Data Mining (KDD-96). AAAI Press. pp. 226–231. ISBN 1-57735-004-9.</li>
+<li>Sander, Jörg; Ester, Martin; Kriegel, Hans-Peter; Xu, Xiaowei (1998). Density-Based Clustering in Spatial Databases: The Algorithm GDBSCAN and Its Applications. Berlin: Springer-Verlag. pp. 169–194. doi:10.1023/A:1009745219419.</li>
+</li>
+</ul>
+
+<br /><br />
+For providing <b>Feedback</b> please click <a href="http://virtual-labs.ac.in/feedback/">here</a>.<br />
+
+<br />
+- Sponsored by MHRD: <a href="http://virtual-labs.ac.in/nmeict/" target="_blank">click</a>
+- Licensing Terms: <a href="http://virtual-labs.ac.in/licensing/" target="_blank">click</a>
+
+{{{id=9|
+
+///
+}}}
+
+{{{id=10|
+
+///
+}}}
+
+{{{id=11|
+
+///
+}}}

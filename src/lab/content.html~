@@ -1,0 +1,271 @@
+<!-- This file needs to be edited by the lab developer to suit
+their lab rquirements. -->
+
+<!-- Add class="default" to include any element as it is
+specified in default.html. 
+Do not include class="default" to the elements that you want to
+edit -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Datamining</title>
+</head>
+
+<body>
+
+<div id="lab"> <!-- The Lab Document Container-->
+  
+  <!-- The lab Header contains the logo and the name of the lab, 
+  usually displayed on the top of the page-->
+
+  <header id="lab-header">
+    
+    <div id="lab-header-logo" class="logo">
+      <!-- Enclose the logo image of your lab or write it in 
+      text-->
+      <img src="images/logo.jpg" />
+    </div>
+
+    <div id="lab-header-heading" class="heading">
+    <!-- Write the name of your lab and link it to the home page
+    of your lab. -->
+      <a href="index.html">Data Mining</a>	
+    </div>
+
+    <!-- Add any additional element or link you want to add to 
+    the lab header, For example : Help (Enclosing them with 
+    suitable div is recommended)-->
+  
+  </header>
+
+
+  <!-- The lab article is the main content area where all the 
+  experiment content sits-->
+  <article id="lab-article">
+
+
+    <!-- The lab article has an header, optional navigational 
+    menu, number of sections, an optional sidebar and a closing 
+    footer-->
+    <header id="lab-article-header">
+      
+      <!-- You can add a welcome message or title of the 
+      experiment enclosed in h1 tag here -->
+      <div id="lab-article-heading" class="heading">
+        Welcome to Data Minings Lab!
+      </div>
+
+      <!-- Add any additional element if required with proper 
+      enclosing-->
+    </header>
+
+
+    <!-- Navigation menu is useful to organize the view of 
+    multiple sections inside the article-->
+    <nav id="lab-article-navigation" class="default">
+      
+      <!-- The menu will be dynamically generated to contain the 
+      headings of your sections or instead write the menu items 
+      of your choice individually enclosed in <li> tag as shown 
+      below-->
+
+    </nav>
+
+    
+    <!-- All the sections of your lab or experiment can be 
+    enclosed together with a div element as shown below-->
+    <div id="lab-article-sections">
+			
+      <!-- First section of the article-->
+      <section id="lab-article-section-1">
+        <div id="lab-article-section-1-icon" class="icon">
+          <!-- Enclose the icon image for the section. -->
+	  <img src="images/theory.jpg" />
+	</div>
+
+
+        <!-- The heading for the section can be enclosed in a 
+        div tag. -->
+	<div id="lab-article-section-1-heading" class="heading">
+	Introduction
+	</div>
+				
+	<!-- Write the section content inside a paragraph 
+        element, You can also include images with <img> tag -->
+	<div id="lab-article-section-1-content" class="content">
+	  <p>
+	    The Data Mining virtual lab provides a platform for students to understand the concepts of Data mining and their application	  </p>
+	</div>
+	
+      </section>
+		
+
+      <!-- Second section of the article-->
+      <section id="lab-article-section-2">
+        
+        <div id="lab-article-section-2-icon" class="icon">
+          <!-- Enclose the icon image for the section. -->
+	  <img src="images/simulation.jpg" />
+	</div>
+
+
+        <!-- The heading for the section can be enclosed in a 
+        div tag and shown with a <h2> tag -->
+	<div id="lab-article-section-2-heading" class="heading">
+	  List of experiments
+	</div>
+				
+	<!-- Write the section content inside a paragraph 
+        element, You can also include images with <img> tag -->
+        <div id="lab-article-section-2-content" class="content">
+	  <ul id="list-of-experiments">
+	  
+<li><a href="Apriori-Algorithm/worksheet.html">Apriori (An association rule mining algorithm)</a></li>
+<li><a href="Sampling-Algorithm/worksheet.html">Sampling (An association rule mining algorithm)</a></li>
+<li><a href="Partition-Algorithm/index.html">Partition (An association rule mining algorithm)</a></li>
+<li><a href="Mining-Algorithm/worksheet.html">Comparison of Association Rule Mining Algorithms</a></li>
+<li><a href="K-meansAlgorithm/worksheet.html">k-Means (A partitioning clustering algorithm)</a></li>
+<li><a href="Agglomerative-Clustering/worksheet.html">Agglomerative Clustering (A hierachial clustering algorithm)</a></li>
+<li><a href="DBSCAN/worksheet.html">DBSCAN (A density-based clustering algorithm)</a></li>
+<li><a href="KNN/worksheet.html">kNN (A nearest neighbour based classification algorithm)</a></li>
+<li><a href="Decision-Tree/index.html">Decision Tree (Classification algorithm)</a></li>
+<li><a href="Comparison/worksheet.html">Comparison of Classification algorithms</a></li>
+	  </ul>
+	</div>
+	
+      </section>
+
+
+	 <!-- Second section of the article-->
+      <section id="lab-article-section-3">
+        
+        <div id="lab-article-section-3-icon" class="icon">
+          <!-- Enclose the icon image for the section. -->
+	  <img src="images/introduction.jpg" />
+	</div>
+
+
+        <!-- The heading for the section can be enclosed in a 
+        div tag and shown with a <h2> tag -->
+	<div id="lab-article-section-3-heading" class="heading">
+	 Target Audience
+	</div>
+				
+	<!-- Write the section content inside a paragraph 
+        element, You can also include images with <img> tag -->
+        <div id="lab-article-section-3-content" class="content">
+	  <p>
+This lab is useful to undergraduate or postgraduate students who are starting to learn about the field of Data mining. Prior knowledge about databases and data structures would be helpful, although not mandatory. Data mining is a popular elective in most undergraduate / postgraduate CS curricula across the World, and is typically taken in the 3rd/4th year of undergraduate study
+	  </p>
+	</div>
+	
+      </section>
+
+	<section id="lab-article-section-4">
+        
+        <div id="lab-article-section-4-icon" class="icon">
+          <!-- Enclose the icon image for the section. -->
+	  <img src="images/readings.jpg" />
+	</div>
+
+
+        <!-- The heading for the section can be enclosed in a 
+        div tag and shown with a <h2> tag -->
+	<div id="lab-article-section-4-heading" class="heading">
+	 Courses Aligned
+	</div>
+				
+	<!-- Write the section content inside a paragraph 
+        element, You can also include images with <img> tag -->
+        <div id="lab-article-section-4-content" class="content">
+	  <p>
+	    The present lab is aligned with courses such as Data Mining, Data Ware housing, Web Data and Knowledge Management.  The experiments touch on most topics covered in such courses in most curricula.
+	  </p>
+	</div>
+	
+      </section>
+
+	<section id="lab-article-section-5">
+        
+        <div id="lab-article-section-5-icon" class="icon">
+          <!-- Enclose the icon image for the section. -->
+	  <img src="images/procedure.jpg" />
+	</div>
+
+
+        <!-- The heading for the section can be enclosed in a 
+        div tag and shown with a <h2> tag -->
+	<div id="lab-article-section-5-heading" class="heading">
+	 Pre-requisites
+	</div>
+				
+	<!-- Write the section content inside a paragraph 
+        element, You can also include images with <img> tag -->
+        <div id="lab-article-section-5-content" class="content">
+	  <p>
+	   <ul> 
+		<li>A java script enabled web-browser. Java allows you to play online virtual labs.</li>
+	   </ul>
+	  </p>
+	</div>
+	
+      </section>
+
+	<section id="lab-article-section-6">
+        
+        <div id="lab-article-section-6-icon" class="icon">
+          <!-- Enclose the icon image for the section. -->
+	  <img src="images/manual.jpg" />
+	</div>
+
+
+        <!-- The heading for the section can be enclosed in a 
+        div tag and shown with a <h2> tag -->
+	<div id="lab-article-section-6-heading" class="heading">
+	 Feedback
+	</div>
+				
+	<!-- Write the section content inside a paragraph 
+        element, You can also include images with <img> tag -->
+        <div id="lab-article-section-6-content" class="content">
+	  <p>
+	   <ul> 
+		<li><a href="http://virtual-labs.ac.in/feedback/" >Feedback</a></li>
+		
+	   </ul>
+	  </p>
+	</div>
+	
+      </section>
+
+
+      </div>	
+
+      <!-- An article can have a sidebar that contain related 
+      links and additional material (it is optional at this 
+      moment)-->
+      <aside id="lab-article-sidebar" class="default">
+	<!-- put the content that you want to appear in the 
+        sidebar-->	
+      </aside>
+		
+      <!-- Article footer can display related content and 
+      additional links -->						
+      <footer id="lab-article-footer" class="default">
+	<!-- Put the content that you want to appear here-->
+      </footer>
+
+    </article>
+	
+  <!-- Links to other labs, about us page can be kept the lab 
+  footer-->
+   <footer id="lab-footer" class="footer">
+    <!-- Put the content here-->
+	<a href="http://virtual-labs.ac.in/nmeict" >Sponsered by MHRD (NME-ICT) </a> | <a href="http://virtual-labs.ac.in/licensing" target="_blank"> Licensing Terms </a>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,317 @@
+
+
+<center>
+<img src="http://virtual-labs.ac.in/images/virtualLabsLogo.jpg" width="1220" alt="logo"/> 
+</center>
+
+<h1 style="color: green;">The Sampling Algorithm</h1>
+<h2 style="color: green;">Introduction</h2>
+<p>
+Statistical analysis over a small random sample of a dataset is often considered to be as good as statistical analysis over the entire dataset. The same holds true for frequent itemset mining. A random sample $S$ of size $m$ is obtained by selecting $m$ records randomly (i.e., with a uniform distribution) from the original dataset.</p>
+
+<p>The frequent itemsets $F_S$ (and their supports) mined from the sample are a good representative of the frequent itemsets $F$ mined from the entire dataset $D$. Unfortunately, there is always a small chance that important frequent itemsets are missed out in the sample or their supports are grossly misrepresented. The user may therefore be interested in the exact mining results.</p>
+
+<p>Luckily, it turns out that the sampling approach is useful even if the user is interested in the exact mining results as will be illustrated below.</p>
+
+<h2 style="color: green;">Objective</h2>
+<p>
+Through this experiment we will demonstrate the working of the Sampling algorithm, which is designed to operate in only two scans of the database.
+</p>
+
+<h2 style="color: green;">Theory</h2>
+
+<h3>Problem Formulation:</h3>
+
+<p>The problem formulation is the same as that of Apriori, except that it internally generates a sample of the dataset.</p>
+
+<h3>Algorithm:</h3>
+<p>The algorithm proceeds in the following manner:</p>
+
+<p><b>Scan 1:</b> The frequent itemsets $F_S$ obtained over the sample is counted by making a scan over the entire dataset $D$ to obtain their actual supports. At the end of this scan, it may turn out that some itemsets in $F_S$ are not frequent over $D$. These itemsets can be easily discarded as being infrequent.</p>
+
+<p>Unfortunately, there may be other (as yet unknown) itemsets that are frequent in $D$, but not present in $F_S$. To identify such itemsets, the negative border technique described below is employed.</p>
+
+<p><b>Candidate Generation: The Negative Border Technique</b> The negative border of a set of frequent itemsets consists of all infrequent itemsets that do not have any infrequent subsets. Intuitively, the negative border of a set of frequent itemsets consists of those itemsets that are <i>minimally infrequent</i>.</p>
+
+<p>Now, let $N_S$ be the negative border of $F_S$. In this context, the technique boils down to the following: During scan 1, while counting $F_S$ over $D$, also count the itemsets in $N_S$. At the end of scan 1, some itemsets in $N_S$ may turn out to be frequent in $D$ – call such itemsets as promoted borders. An important observation that lies at the heart of the negative border technique is the following:</p>
+
+<p><b>Theorem:</b> The (as yet unknown) itemsets that are frequent in $D$, but not present in $F_S$ must be promoted borders, or supersets of promoted borders.</p>
+
+<p><b>Proof:</b> Itemsets in $N_S$ that continue to be infrequent in $D$ – i.e. the "unpromoted" borders cannot have frequent supersets. Therefore, itemsets that are frequent in $D$, but not present in $F_S$ must be promoted borders, or supersets of promoted borders.</p>
+
+<p>If the sample is good, the number of promoted borders is likely to be small and so all their supersets can be generated. However, care should be taken to avoid generating supersets that have infrequent subsets (i.e., itemsets identified to be infrequent in $D$ at the end of the first scan). The resulting supersets form the set of candidates that are to be counted during a second scan of $D$.</p>
+
+<p><b>Scan 2:</b> The technique ends with a second scan over the dataset $D$, during which, the supports of the generated candidates are counted to determine those that are frequent.</p>
+
+<h2 style="color: green;">Procedure</h2>
+
+We present the Sampling algorithm simulation in the next section. Some points to note are as follows:<br />
+
+<ol>
+<li>
+The minimum support for the experiment is 0.6
+</li>
+<li> Clicking on 'evaluate' will run the algorithm.</li>
+</ol>
+
+<h2 style="color: green;">Simulation</h2>
+
+Consider the following dataset:<br /><br /><br />
+
+{{{id=1|
+#auto
+data = [
+('A','C','D','F','G','I','M','P'), #each row here is a record, or a market basket with several items
+('A','B','C','F','L','M','O'),
+('B','F','H','J','O'),
+('B','C','K','P'),
+('A','C','E','F','L','M','N','P'),
+('D','E','F','K','L','M','P'),
+('A','C','F','L','M','P'),
+('A','C','F','J','M','P'),
+('B','G','J','K','O'),
+('C','E','F','L','M','N','P')
+]
+///
+}}}
+
+You may change the data above and click on 'evaluate' if you want to try out the algorithm with a different dataset.
+
+{{{id=6|
+#auto
+minsup = 0.6
+sample_size = 5
+///
+}}}
+
+You may choose different parameters by clicking above. Don't forget to click on 'evaluate' after you change them.
+
+{{{id=3|
+%hideall
+#auto
+def AprioriGen(F):
+    C  = {}
+    for x in F:
+        for y in F:
+            if len(x) == len(y): #in general case this may be required
+                z = set(x)|set(y)
+                if len(z) == len(x)+1: #true if x and y share all items except 1
+                    prune = False
+                    z = list(z)
+                    z.sort()
+                    for i in range(len(z)): #remove each item from z
+                        item = z.pop(i)
+                        if tuple(z) not in F: #is subset of z in F ?
+                            prune = True
+                            break
+                        z.insert(i,item)
+                    if not prune:
+                        C[tuple(z)] = 0
+    return C
+///
+}}}
+
+{{{id=5|
+%hide
+#auto
+def apriori(data, minsup):
+    mincount = int(math.ceil(len(data) * minsup))
+    print 'mincount =', mincount
+    C = {}
+    F = {}
+
+    #--- first scan
+    for r in data:
+        r = tuple(r)
+        for i in r:
+            if (i,) in C: C[(i,)] += 1
+            else: C[(i,)] = 1
+
+    Fk = dict((s,count) for s,count in C.iteritems() if count >= mincount)
+    F.update(Fk)
+    print '\nC1:-------------\n',C
+
+    C = AprioriGen(Fk)
+    print '\nF1:-------------\n',Fk
+    print '\nC2:-------------\n',C
+
+    #--- more scans
+    k = 2
+    while len(C) > 0:
+        for r in data:
+            sr = set(r)
+            for s in C:
+                if set(s) <= sr:
+                    C[s] += 1
+
+        Fk = dict((s,count) for s,count in C.iteritems() if count >= mincount)
+        F.update(Fk)
+        C = AprioriGen(Fk)
+        print '\nF%d:-------------\n'%k,Fk
+        print '\nC%d:-------------\n'%(k+1),C
+        k += 1
+    return F
+///
+}}}
+
+Following is an implementation of the sampling algorithm. Clicking on 'evaluate' will show its output.
+
+{{{id=12|
+def sampling(data, minsup, sample_size):
+    sample = data[0:sample_size]
+    
+    #--- mine sample
+    FS = apriori(sample, minsup)
+    NS = AprioriGen(FS)
+
+    #--- reset counters
+    for i in FS: FS[i] = 0
+
+    #--- first scan: count FS and NS
+    for r in data:
+        sr = set(r)
+        #-- count FS
+        for s in FS:
+            if set(s) <= sr:
+                FS[s] += 1
+        #-- count NS
+        for s in NS:
+            if set(s) <= sr:
+                NS[s] += 1
+        #-- handle singletons that are not in sample
+        for i in r:
+            if (i,) not in NS and (i,) not in FS:
+                NS[(i,)] = 1
+    
+    #--- gather global frequent and infrequent itemsets
+    mincount = int(math.ceil(len(data) * minsup))
+    F = dict((s,count) for s,count in FS.iteritems() if count >= mincount)
+    promoted_borders = dict((s,count) for s,count in NS.iteritems() if count >= mincount)
+    F.update(promoted_borders)
+    infrequent = dict((s,count) for s,count in FS.iteritems() if count < mincount)
+    infrequent.update(dict((s,count) for s,count in NS.iteritems() if count < mincount))
+    
+    #--- generate supersets of promoted borders
+    supersets  = {}
+    expand_set = promoted_borders
+    while expand_set:
+        immediate_supersets = {}
+        for x in expand_set:
+            for y in F:
+                if len(x) == len(y): #in general case this may be required
+                    z = set(x)|set(y)
+                    if len(z) == len(x)+1: #true if x and y share all items except 1
+                        prune = False
+                        z = list(z)
+                        z.sort()
+                        for i in range(len(z)): #remove each item from z
+                            item = z.pop(i)
+                            if tuple(z) in infrequent:
+                                prune = True
+                                break
+                            z.insert(i,item)
+                        if not prune:
+                            immediate_supersets[tuple(z)] = 0
+        supersets.update(immediate_supersets)
+        expand_set = immediate_supersets
+
+    #--- second scan: get counts of supersets
+    for r in data:
+        sr = set(r)
+        for s in supersets:
+            if set(s) <= sr:
+                supersets[s] += 1
+
+    F_last = dict((s,count) for s,count in supersets.iteritems() if count >= mincount)
+    F.update(F_last)
+    return F
+///
+}}}
+
+{{{id=4|
+F = sampling(data, minsup, sample_size)
+print '\nSampling Result:', F
+///
+mincount = 3
+
+C1:-------------
+{('N',): 1, ('A',): 3, ('C',): 4, ('I',): 1, ('B',): 3, ('H',): 1, ('E',): 1, ('K',): 1, ('D',): 1, ('J',): 1, ('G',): 1, ('P',): 3, ('M',): 3, ('F',): 4, ('L',): 2, ('O',): 2}
+
+F1:-------------
+{('A',): 3, ('C',): 4, ('B',): 3, ('P',): 3, ('M',): 3, ('F',): 4}
+
+C2:-------------
+{('C', 'F'): 0, ('B', 'C'): 0, ('B', 'M'): 0, ('F', 'M'): 0, ('A', 'F'): 0, ('A', 'M'): 0, ('A', 'P'): 0, ('M', 'P'): 0, ('C', 'M'): 0, ('F', 'P'): 0, ('B', 'F'): 0, ('A', 'B'): 0, ('B', 'P'): 0, ('A', 'C'): 0, ('C', 'P'): 0}
+
+F2:-------------
+{('C', 'F'): 3, ('F', 'M'): 3, ('A', 'F'): 3, ('A', 'M'): 3, ('C', 'M'): 3, ('A', 'C'): 3, ('C', 'P'): 3}
+
+C3:-------------
+{('A', 'F', 'M'): 0, ('A', 'C', 'F'): 0, ('A', 'C', 'M'): 0, ('C', 'F', 'M'): 0}
+
+F3:-------------
+{('A', 'F', 'M'): 3, ('A', 'C', 'F'): 3, ('A', 'C', 'M'): 3, ('C', 'F', 'M'): 3}
+
+C4:-------------
+{('A', 'C', 'F', 'M'): 0}
+
+F4:-------------
+{('A', 'C', 'F', 'M'): 3}
+
+C5:-------------
+{}
+
+Sampling Result: {('C', 'F'): 6, ('C', 'P'): 6, ('F', 'M'): 7, ('C',): 7, ('F', 'M', 'P'): 6, ('F', 'P'): 6, ('M', 'P'): 6, ('C', 'M'): 6, ('P',): 7, ('M',): 7, ('F',): 8, ('C', 'F', 'M'): 6}
+}}}
+
+<h2 style="color: green;">Assignment</h2>
+<ol>
+<li> Define min-support and min-confidence with an example. </li>
+<li> Find all frequent itemsets using apriori<br /><br /> 
+<table border="1" cellspacing="0px" cellpadding="5px">
+<tbody>
+<tr>
+<th>TID</th><th>items_bought</th>
+</tr>
+<tr>
+<td>T100</td>
+<td>{M, O, N, K, E, Y}</td>
+</tr>
+<tr>
+<td>T200</td>
+<td>{D, O, N, K, E, Y}</td>
+</tr>
+<tr>
+<td>T300</td>
+<td>{M, A, K, E}</td>
+</tr>
+<tr>
+<td>T400</td>
+<td>{M, U, C, K, Y}</td>
+</tr>
+<tr>
+<td>T500</td>
+<td>{C, O, O, K, I, E}</td>
+</tr>
+</tbody>
+</table>
+<br /> Minimum support = 60%, minimum confidence = 80%<br /><br /> </li>
+<li> Compute the frequent itemsets for the same datasets for minimum support 30% and confidence 80%. Comment on the number  of rules output in both cases.<br /><br /> </li>
+</ol>
+<h2 style="color: green;">References</h2>
+<ul>
+<li>Mohammed Javeed Zaki, Srinivasan Parthasarathy, Wei Li, Mitsunori Ogihara. Evaluation of Sampling for Data Mining of Association Rule (RIDE '97).&nbsp; In Proc. of the 7th International Workshop on Research  Issues in Data Engineering, High Performance Database  Management for Large-Scale Applications. </li>
+<li>R. Agarwal, T. Imielinski and A. Swami. Mining Association Rules between sets of items in large databases. In Proc. 1993 ACM SIGMOD Intl. Conf. Management of Data (SIGMOD 93), Pg. 207-216, Washington D.C., May 1993. </li>
+</ul>
+
+<br /><br />
+For providing <b>Feedback</b> please click <a href="http://virtual-labs.ac.in/feedback/">here</a>.<br />
+
+<br />
+- Sponsored by MHRD: <a href="http://virtual-labs.ac.in/nmeict/" target="_blank">click</a>
+- Licensing Terms: <a href="http://virtual-labs.ac.in/licensing/" target="_blank">click</a>
+
+{{{id=13|
+
+///
+}}}

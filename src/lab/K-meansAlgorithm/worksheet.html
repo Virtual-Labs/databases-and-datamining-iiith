@@ -1,0 +1,226 @@
+
+
+<center>
+<img src="http://virtual-labs.ac.in/images/virtualLabsLogo.jpg" width="1220" alt="logo"/> 
+</center>
+
+<h1 style="color: green;">The K means Algorithm</h1>
+<h2 style="color: green;">Introduction</h2>
+<p>
+Cluster analysis or clustering is the assignment of a set of observations into subsets (called clusters) so that observations in the same cluster are similar in some sense. Clustering is a method of unsupervised learning, and a common technique for statistical data analysis used in many fields, including machine learning, data mining, pattern recognition, image analysis and bioinformatics
+</p>
+
+<h2 style="color: green;">Objective</h2>
+<p>
+Through this experiment we will explain clustering using the kmeans clustering algorithm on a dummy 2 dimensional dataset. In data mining, k-means clustering is a method of cluster analysis which aims to partition n observations into k clusters in which each observation belongs to the cluster with the nearest mean.
+</p>
+
+<h2 style="color: green;">Theory</h2>
+
+Given a set of observations $(x_1, x_2, ..., x_n)$, where each observation is a d-dimensional real vector, $k$-means clustering aims to partition the n observations into $k$ sets ($k$ < $n$) $S$ = $(S_1, S_2, ..., S_k)$ so as to minimize the within-cluster sum of squares (WCSS). The algorithm to achieve this is as below
+
+<h3>Psuedo Code:</h3>
+<pre>
+kMeans(X, k)<br />
+{
+	/*Initialization:*/ Initialize the means of k clusters: $C_1, C_2,... C_k$. 
+        /*Assignment: */ For each sample a in X: Cluster(a): Find the cluster which has the mean closest to a; // a assigned to Cluster(a); 
+        /*Update */ Update the Means Of Cluster as: 
+        Si = {x | Cluster(x) == i} 
+        //The Cluster i Ci = Mean(Si) // The mean of Cluster i; 
+        /*Stopping Cond. */ if(Mean has changed): 
+        Goto Assignment Step 
+        else 
+            return S;
+}
+</pre>
+
+<h2 style="color: green;">Procedure</h2>
+
+<br />
+We present the $k$-means simulation in the next section. Some points to note are as follows:<br />
+
+<ol>
+<li>
+The $k$ for the experiment is 3, where k is the desired number of clusters as explained above.
+</li>
+<li> Clicking on 'evaluate' will run the algorithm.</li>
+</ol>
+
+<h2 style="color: green;">Simulation</h2>
+
+Consider the following dataset:<br /><br /><br />
+
+{{{id=13|
+
+///
+}}}
+
+{{{id=14|
+
+///
+}}}
+
+{{{id=2|
+#auto
+data = [
+(5.1,3.5,1.4,0.3), #each row here is a record
+(5.7,3.8,1.7,0.3),
+(7.4,2.8,6.1,1.9),
+(5.1,3.8,1.5,0.3),
+(6.7,3.3,5.7,2.1),
+(6.2,2.8,4.8,1.8),
+(6.4,2.8,5.6,2.1),
+(7.4,2.8,6.1,1.9),
+(7.9,3.8,6.4,2.0),
+]
+///
+}}}
+
+You may change the data above and click on 'evaluate' if you want to try out the algorithm with a different sample dataset.
+
+{{{id=15|
+#auto
+data = [
+(5.1,3.5,1.4,0.3), #each row here is a record
+(5.7,3.8,1.7,0.3),
+(7.4,2.8,6.1,1.9),
+(5.1,3.8,1.5,0.3),
+(6.7,3.3,5.7,2.1),
+(6.2,2.8,4.8,1.8),
+(6.4,2.8,5.6,2.1),
+(7.4,2.8,6.1,1.9),
+(7.9,3.8,6.4,2.0),
+]
+///
+}}}
+
+{{{id=7|
+#auto
+K = 4
+///
+}}}
+
+You may choose a different $k$ by clicking above. Don't forget to click on 'evaluate' after you change the $k$.
+
+Following is the Kmean  function that takes as input data and $k$.
+
+{{{id=3|
+prevClusterID    = {};
+currentClusterID = {};
+clusterMeans     = {};
+D = {}
+def Kmeans(data,K):
+        iterator  = 0;
+	for line in data:
+		D[iterator] = line;
+		currentClusterID[iterator] = -1;
+		prevClusterID[iterator]    = -1;
+		if(iterator < K):
+			for points in range(0,len(line)):
+				clusterMeans[iterator, points] = [float(line[points]),0.000];
+		iterator    = iterator + 1;
+	clusterPoints = [];
+	while(1):
+		for points in D:
+			 currentClusterID[points] = getCluster(D[points]);
+		reCalMeans(clusterMeans);
+		if(isOver(prevClusterID,currentClusterID) == 1):
+			for P in D :
+				print "Point : ",D[P]," - Cluster ID",currentClusterID[P];
+			break;
+
+		for P in currentClusterID:
+			prevClusterID[P] = currentClusterID[P];
+
+
+def reCalMeans(clusterMeans):
+	for P in clusterMeans:
+		clusterMeans[P] = [0.000,0.000];
+	
+	for P in D:
+		clusterID     = currentClusterID[P];
+		for N in range(0,len(D[P])):
+			clusterMeans[clusterID,N] = [clusterMeans[clusterID,N][0]+float(D[P][N]),clusterMeans[clusterID,N][1]+1.000];
+	for P in clusterMeans:
+                clusterMeans[P] = [clusterMeans[P][0]/clusterMeans[P][1],0.000];
+
+
+def getCluster(point):
+	distanceMatrix = {};
+	for cluster in range(0,K):
+		distanceTemp = 0.000;
+		for P in range(0,len(point)):
+			temp = float(point[P]) - float(clusterMeans[cluster,P][0]);
+			distanceTemp += temp*temp;
+		distanceMatrix[cluster] = distanceTemp;
+
+	inMin     = 10000000;
+	inCluster = -1;
+	for P in distanceMatrix:
+		if(distanceMatrix[P] < inMin):
+			inMin = distanceMatrix[P];
+			inCluster = P;
+	return inCluster;
+
+
+def isOver(prevClusterID,currentClusterID):
+	isOver = 1;
+	for ID in prevClusterID:
+		if(currentClusterID[ID] != prevClusterID[ID]):
+			isOver = 0;
+			break;
+	return isOver;
+///
+}}}
+
+Finally, here is the code for the function call for $k$-means algorithm.
+
+{{{id=12|
+
+///
+}}}
+
+{{{id=6|
+Kmeans(data,K);
+///
+Point :  (5.10000000000000, 3.50000000000000, 1.40000000000000, 0.300000000000000)  - Cluster ID 0
+Point :  (5.70000000000000, 3.80000000000000, 1.70000000000000, 0.300000000000000)  - Cluster ID 1
+Point :  (7.40000000000000, 2.80000000000000, 6.10000000000000, 1.90000000000000)  - Cluster ID 2
+Point :  (5.10000000000000, 3.80000000000000, 1.50000000000000, 0.300000000000000)  - Cluster ID 3
+Point :  (6.70000000000000, 3.30000000000000, 5.70000000000000, 2.10000000000000)  - Cluster ID 2
+Point :  (6.20000000000000, 2.80000000000000, 4.80000000000000, 1.80000000000000)  - Cluster ID 2
+Point :  (6.40000000000000, 2.80000000000000, 5.60000000000000, 2.10000000000000)  - Cluster ID 2
+Point :  (7.40000000000000, 2.80000000000000, 6.10000000000000, 1.90000000000000)  - Cluster ID 2
+Point :  (7.90000000000000, 3.80000000000000, 6.40000000000000, 2.00000000000000)  - Cluster ID 2
+}}}
+
+<h2 style="color: green;">Assignment</h2>
+<ol>
+<li>Consider the following dataset :&nbsp;[ (120,327), (202,347), (186,228), (180,166), (289,311), (125,215), (268,288), (127,157), (132,225), (234,345), (200,229), (217,273), (267,297), (221,273), (209,333), (228,254), (217,328), (225,308), (122,184), (137,271), (463,327), (479,384), (408,501), (356,331), (381,445), (384,304), (357,524), (395,278), (423,362), (404,286), (384,305), (439,458), (421,312), (431,468), (388,371), (340,307), (401,372), (332,492), (448,318), (390,415) ]&nbsp;and with K = 2; the following initial means : [ (200,229), (384,304) ].&nbsp;Apply Kmeans algorithm clustering algorithm.</li>
+<li> Compute the clusters &nbsp;for the same datasets with different k and different initial means. Comment on the clusters obtained in both the cases.<br /><br /> </li>
+</ol>
+<h2 style="color: green;">References</h2>
+<ul>
+<li>S. P. Lloyd. Least squares quantization in PCM. IEEE trans. Information Theory, 28:128 - 137, 1982, (Original version: Technical Report, Bell Labs - 1957.)</li>
+<li>J. MacQueen. Some methods for classification and multi-variate observations. Proc. 5th Berkeley, symp. math. statist. prob., 1:281 - 297, 1967.</li>
+<li>L. Kauffman and P. J. Rousseeuw. Finding groups in data: An introduction to cluster analysis. John Willey and sons, 1990.</li>
+<li>Z. Huang. Extensions to the kMeans algorithm for clustering large datasets with categorical values. Data Mining and Knowledge Discovery, 2: 283 - 304, 1998.</li>
+</ul>
+
+<br /><br />
+For providing <b>Feedback</b> please click <a href="http://virtual-labs.ac.in/feedback/">here</a>.<br />
+
+<br />
+- Sponsored by MHRD: <a href="http://virtual-labs.ac.in/nmeict/" target="_blank">click</a>
+- Licensing Terms: <a href="http://virtual-labs.ac.in/licensing/" target="_blank">click</a>
+
+{{{id=16|
+
+///
+}}}
+
+{{{id=11|
+
+///
+}}}
