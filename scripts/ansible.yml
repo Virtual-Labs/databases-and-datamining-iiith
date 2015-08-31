@@ -36,12 +36,6 @@
    - name : install sage binary
      apt : name=sagemath-upstream-binary state=present
    
-   - name : remove password for create_sagenb
-     shell : chmod +s create_sagenb
-
-   - name : remove password for create_sagenb
-     shell : chmod +s start_sage
-
    - name : invoke create_sagenb script
      command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/create_sagenb -i -y
 
