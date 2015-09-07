@@ -35,10 +35,13 @@
 
    - name : install sage binary
      apt : name=sagemath-upstream-binary state=present
-   
+
+   - name : set password
+     shell : cp users.pickle ~/.sage/sage_notebook.sagenb/ 
+
    - name : invoke create_sagenb script
-     command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/scripts/create_sage.exp & -i -y
+     command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/create_sagenb -i -y
 
    - name : invoke start_sage script
-     command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/start_sage.exp & -i -y
+     command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/start_sage -i -y
 
