@@ -36,7 +36,10 @@
    - name : install sage binary
      apt : name=sagemath-upstream-binary state=present
 
-   - name : set password
+   - name : create sage directory
+     shell : mkdir -p ~/.sage/sage_notebook.sagenb/
+
+   - name : copy users.pickle
      shell : cp -r users.pickle ~/.sage/sage_notebook.sagenb/ 
 
    - name : invoke create_sagenb script
