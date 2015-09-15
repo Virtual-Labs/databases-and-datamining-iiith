@@ -48,3 +48,14 @@
    - name : invoke start_sage script
      command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/start_sage -i -y
 
+   - name : copy index.html file
+     shell : cp -r index.html /var/www/
+
+   - name : configure apache
+     shell : cat apacheconfig >> /etc/apache2/sites-enabled/000-default
+
+   - name : enable a2enmod proxy module 
+     shell : a2enmod proxy
+   
+   - name : enable a2enmod proxy_http module
+     shell : a2enmod proxy_http

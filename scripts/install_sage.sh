@@ -8,5 +8,5 @@ apt-get install dvipng
 apt-get install sagemath-upstream-binary
 mkdir -p ~/.sage/sage-notebook.sagenb/
 cp -r users.pickle ~/.sage/sage-notebook.sagenb/
-/usr/bin/screen -d -m sudo /root/databases-and-datamining/scripts/create_sagenb -i -y
-/usr/bin/screen -d -m sudo /root/databases-and-datamining/scripts/start_sage -i -y
+/usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/create_sagenb -i -y
+/usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/start_sage -i -y
