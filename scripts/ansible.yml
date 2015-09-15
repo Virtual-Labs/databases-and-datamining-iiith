@@ -47,6 +47,12 @@
 
    - name : invoke start_sage script
      command: /usr/bin/screen -d -m sudo /root/databases-and-datamining-iiith/python-scripts/start_sage -i -y
+   
+   - name : run makefile
+     command : make -C ../src     
+
+   - name : rename index.html
+     command : rm -rf index.html
 
    - name : copy index.html file
      shell : cp -r index.html /var/www/
@@ -61,4 +67,4 @@
      shell : a2enmod proxy_http
 
    - name : restart apache server
-     service : name=httpd state=started
+     service : name=apache2 state=started
