@@ -4,10 +4,10 @@
             "platform": {
                 "arch": "i386", 
                 "build_steps": {
-                    "build": ["sh change-shell.sh", "make all -C ../src",  "sh start_sage"], 
+                    "build": [], 
                     "configure": [], 
                     "post_build": [], 
-                    "pre_build": ["sh pre-build-script.sh"], 
+                    "pre_build": [], 
                     "status": []
                 }, 
                 "installer": [], 
@@ -63,7 +63,10 @@
             "platform": {
                 "arch": "i386", 
                 "hosting": "dedicated", 
-                "installer": [], 
+                "installer": ["apt-get update", "apt-get install -y python-software-properties", 
+				"add-apt-repository ppa:ansible/ansible", "apt-get update", "apt-get install -y ansible",
+				"ansible-playbook labspec.yml"	
+				], 
                 "lab_actions": {
                     "backup": [], 
                     "clean": [], 
@@ -78,7 +81,7 @@
                     "stop": []
                 }, 
                 "memory": {
-                    "max_required": "2gb", 
+                    "max_required": "10gb", 
                     "min_required": "256mb"
                 }, 
                 "os": "ubuntu", 
